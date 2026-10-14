@@ -1,0 +1,1656 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Porkys C.A - App de Pedidos</title>
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getFirestore, collection, getDocs, updateDoc, doc, deleteDoc, onSnapshot, setDoc, addDoc, initializeFirestore } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDlQUAILN4liBnXNVjsu1x8q_Z-s2kTDQg",
+      authDomain: "porkys2027.firebaseapp.com",
+      projectId: "porkys2027",
+      storageBucket: "porkys2027.firebasestorage.app",
+      messagingSenderId: "659135821980",
+      appId: "1:659135821980:web:37bb0f6d9df85041e7d559",
+      measurementId: "G-DVDK881QS9"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = initializeFirestore(app, { experimentalForceLongPolling: true });
+
+    window.db = db;
+    window.firebaseCollections = { collection, getDocs, updateDoc, doc, deleteDoc, onSnapshot, setDoc, addDoc };
+    window.dispatchEvent(new Event('firebase-ready'));
+  </script>
+  <style>
+    :root {
+      --pink-main: #ff6b81;
+      --pink-accent: #ff4757;
+      --bg-dark: #2f3542;
+      --bg-light: #f1f2f6;
+      --card-bg: #ffffff;
+      --text-dark: #2f3542;
+      --text-muted: #747d8c;
+      --green-success: #2ed573;
+      --orange-warning: #ffa502;
+      --blue-info: #1e90ff;
+      --radius: 14px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', system-ui, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-light);
+      color: var(--text-dark);
+      padding-bottom: 40px;
+    }
+
+    .app-header {
+      background: linear-gradient(135deg, var(--pink-accent), var(--pink-main));
+      color: white;
+      padding: 15px 16px;
+      box-shadow: 0 4px 15px rgba(255, 71, 87, 0.3);
+      text-align: center;
+    }
+
+    .header-branding {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      max-width: 500px;
+      margin: 0 auto;
+    }
+
+    .brand-line {
+      flex: 1;
+      height: 2px;
+      background: rgba(255, 255, 255, 0.6);
+      border-radius: 2px;
+    }
+
+    .pig-badge-icon {
+      background: white;
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.15);
+      border: 2px solid #ffeaa7;
+      flex-shrink: 0;
+    }
+
+    .pig-svg-draw {
+      width: 34px;
+      height: 34px;
+    }
+
+    .app-header h1 {
+      font-size: 1.4rem;
+      font-weight: 800;
+      line-height: 1.2;
+      letter-spacing: 0.5px;
+      margin-top: 4px;
+    }
+
+    .app-header p {
+      font-size: 0.8rem;
+      opacity: 0.95;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: 15px auto;
+      padding: 0 12px;
+    }
+
+    .screen {
+      background: var(--card-bg);
+      padding: 16px;
+      border-radius: var(--radius);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.06);
+      margin-bottom: 15px;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .hero-card {
+      text-align: center;
+      margin-bottom: 15px;
+    }
+
+    h2 {
+      color: var(--pink-accent);
+      font-size: 1.2rem;
+      margin-bottom: 8px;
+    }
+
+    .subtitle {
+      color: var(--text-muted);
+      font-size: 0.85rem;
+    }
+
+    .form-group {
+      margin-bottom: 12px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 0.82rem;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .form-group input, .form-group textarea, .form-group select {
+      width: 100%;
+      padding: 8px 10px;
+      border: 2px solid #eccc68;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      outline: none;
+      background: white;
+    }
+
+    .cedula-input-group {
+      display: flex;
+      gap: 6px;
+    }
+
+    .cedula-input-group select {
+      width: 70px;
+      font-weight: bold;
+    }
+
+    .uppercase-input {
+      text-transform: uppercase;
+    }
+
+    .search-box {
+      position: relative;
+      margin-bottom: 12px;
+    }
+
+    .search-box input {
+      width: 100%;
+      padding: 10px 12px 10px 38px;
+      border: 2px solid var(--pink-accent);
+      border-radius: 10px;
+      font-size: 0.92rem;
+      outline: none;
+    }
+
+    .search-box .search-icon {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 1rem;
+      color: var(--text-muted);
+    }
+        .btn {
+      width: 100%;
+      padding: 10px;
+      border: none;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 6px;
+    }
+
+    .btn-primary { background-color: var(--pink-accent); color: white; }
+    .btn-secondary { background-color: var(--bg-dark); color: white; }
+    .btn-success { background-color: var(--green-success); color: white; }
+    .btn-info { background-color: var(--blue-info); color: white; }
+    .btn-warning { background-color: var(--orange-warning); color: white; }
+    .btn-back { background-color: #dfe4ea; color: var(--text-dark); }
+    .btn-danger { background-color: #ff4757; color: white; }
+    .btn-sm { width: auto; padding: 4px 10px; font-size: 0.8rem; }
+
+    .card-buttons { display: flex; flex-direction: column; gap: 8px; }
+    .switch-link { text-align: center; margin-top: 10px; font-size: 0.85rem; }
+    .switch-link button { background: none; border: none; color: var(--pink-accent); font-weight: bold; cursor: pointer; text-decoration: underline; }
+    .alert-box { padding: 10px; border-radius: 8px; margin-bottom: 12px; font-weight: 700; text-align: center; font-size: 0.85rem; }
+    .alert-box.success { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+    .alert-box.error { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+
+    .user-welcome-card { display: flex; justify-content: space-between; align-items: center; background: #f8f9fa; padding: 8px 12px; border-radius: 8px; margin-bottom: 12px; border: 1px solid #eccc68; }
+    .user-badge { font-size: 0.85rem; }
+    .store-closed-screen-card { background: #f8d7da; border: 2px solid #f5c6cb; padding: 16px; border-radius: 10px; text-align: center; margin-bottom: 15px; }
+    .store-closed-screen-card h3 { color: #721c24; margin-bottom: 6px; }
+    .schedule-badge { background: white; padding: 8px; border-radius: 6px; margin-top: 8px; font-size: 0.85rem; color: #721c24; font-weight: bold; }
+
+    .category-bar { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 6px; margin-bottom: 10px; }
+    .category-bar::-webkit-scrollbar { height: 4px; }
+    .category-bar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 2px; }
+
+    .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 10px; margin-bottom: 15px; }
+    .product-card { background: white; border: 1px solid #e2e8f0; border-radius: 10px; padding: 10px; display: flex; flex-direction: column; justify-content: space-between; box-shadow: 0 2px 5px rgba(0,0,0,0.02); }
+    .product-card h4 { font-size: 0.85rem; margin-bottom: 4px; color: var(--text-dark); height: 32px; overflow: hidden; }
+    .product-price { font-size: 0.95rem; font-weight: 800; color: var(--pink-accent); margin-bottom: 6px; }
+    .product-stock { font-size: 0.72rem; color: var(--text-muted); margin-bottom: 6px; }
+
+    .cart-card { background: #fff; border: 2px dashed var(--pink-main); border-radius: 10px; padding: 12px; margin-bottom: 15px; }
+    .cart-card h3 { font-size: 1rem; color: var(--pink-accent); margin-bottom: 8px; }
+    .cart-items-container { max-height: 180px; overflow-y: auto; margin-bottom: 8px; font-size: 0.85rem; }
+    .cart-item-row { display: flex; justify-content: space-between; align-items: center; padding: 4px 0; border-bottom: 1px solid #f1f2f6; }
+    .empty-cart { color: var(--text-muted); font-size: 0.82rem; text-align: center; padding: 10px 0; }
+
+    .delivery-badge-box { background: #f8f9fa; padding: 6px 10px; border-radius: 6px; display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem; margin-bottom: 8px; border: 1px solid #e2e8f0; }
+    .cart-summary { background: #f8f9fa; padding: 8px 10px; border-radius: 6px; margin-bottom: 10px; text-align: right; }
+    .total-usd { font-size: 1.05rem; font-weight: 800; color: var(--pink-accent); }
+    .total-bs { font-size: 0.85rem; color: var(--text-muted); }
+
+    .order-status-box { background: #e8f4fd; border: 1px solid #bbe1fa; padding: 12px; border-radius: 10px; margin-top: 15px; }
+    .status-badge { display: inline-block; padding: 4px 10px; border-radius: 20px; font-size: 0.78rem; font-weight: bold; }
+    .status-badge.waiting { background: #fff3cd; color: #856404; }
+    .status-badge.processing { background: #d1ecf1; color: #0c5460; }
+    .status-badge.packed { background: #cce5ff; color: #004085; }
+    .status-badge.on_the_way { background: #d4edda; color: #155724; }
+    .status-badge.delivered { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+
+    .card-box { background: white; border: 1px solid #e2e8f0; border-radius: 10px; padding: 12px; margin-bottom: 12px; }
+    .admin-top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+    .price-edit-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; font-size: 0.85rem; }
+    .price-edit-row input { width: 100px; padding: 4px 6px; text-align: right; border: 1px solid #ccc; border-radius: 6px; }
+
+    .collapsible-btn { width: 100%; background: #f1f2f6; border: none; padding: 10px; text-align: left; font-weight: bold; border-radius: 8px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; font-size: 0.88rem; }
+    .collapsible-content { padding: 8px 4px; }
+    .order-card-admin { background: #f8f9fa; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px; margin-bottom: 10px; font-size: 0.85rem; }
+    .empty-orders { color: var(--text-muted); font-size: 0.82rem; text-align: center; padding: 15px 0; }
+
+    .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 1000; padding: 15px; }
+    .modal-content { background: white; padding: 20px; border-radius: 12px; max-width: 400px; width: 100%; box-shadow: 0 10px 25px rgba(0,0,0,0.2); }
+    .modal-content h3 { color: var(--pink-accent); margin-bottom: 10px; font-size: 1.1rem; }
+    .modal-details { background: #f8f9fa; padding: 10px; border-radius: 8px; font-size: 0.85rem; margin: 10px 0; border: 1px solid #e2e8f0; max-height: 200px; overflow-y: auto; }
+    .modal-actions { display: flex; gap: 8px; margin-top: 15px; }
+  </style>
+</head>
+<body>
+  <header class="app-header">
+    <div class="header-branding">
+      <div class="brand-line"></div>
+      <div class="pig-badge-icon">
+        <svg class="pig-svg-draw" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="32" cy="34" r="22" stroke="#ff4757" stroke-width="3.5" fill="#fff" />
+          <path d="M14 20C10 10 20 8 24 16" stroke="#ff4757" stroke-width="3" stroke-linecap="round" fill="#ff6b81" />
+          <path d="M50 20C54 10 44 8 40 16" stroke="#ff4757" stroke-width="3" stroke-linecap="round" fill="#ff6b81" />
+          <ellipse cx="32" cy="38" rx="9" ry="6.5" stroke="#ff4757" stroke-width="3" fill="#ffeaa7" />
+          <circle cx="28.5" cy="38" r="1.8" fill="#ff4757" />
+          <circle cx="35.5" cy="38" r="1.8" fill="#ff4757" />
+          <circle cx="23" cy="28" r="2.5" fill="#2f3542" />
+          <circle cx="41" cy="28" r="2.5" fill="#2f3542" />
+        </svg>
+      </div>
+      <div class="brand-line"></div>
+    </div>
+    <h1>Porkys C.A</h1>
+    <p>Pedidos a Casa</p>
+  </header>
+
+  <main class="container">
+    <div id="alert-box" class="alert-box hidden"></div>
+
+    <section id="screen-home" class="screen">
+      <div class="hero-card">
+        <h2>¡Carnes, charcutería, víveres y limpieza a tu puerta!</h2>
+        <p class="subtitle">Selecciona cómo deseas ingresar a la aplicación:</p>
+      </div>
+      <div class="card-buttons">
+        <button onclick="showScreen('screen-login-client')" class="btn btn-primary">🛒 Soy Cliente</button>
+        <button onclick="showScreen('screen-login-admin')" class="btn btn-secondary">⚙️ Soy Comercio (Admin)</button>
+      </div>
+    </section>
+        <section id="screen-login-client" class="screen hidden">
+      <h2>Iniciar Sesión - Cliente</h2>
+      <form onsubmit="handleLoginClient(event)">
+        <div class="form-group">
+          <label for="login-cedula">Cédula de Identidad:</label>
+          <div class="cedula-input-group">
+            <select id="login-nac">
+              <option value="V">V</option>
+              <option value="E">E</option>
+            </select>
+            <input type="text" id="login-cedula" placeholder="Ej: 12345678" oninput="validateDigits(this, 9)" required>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="login-pass">Contraseña:</label>
+          <input type="password" id="login-pass" placeholder="Tu contraseña" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Ingresar al Catálogo</button>
+      </form>
+      <div class="switch-link">
+        <button type="button" onclick="showScreen('screen-register-client')">¿No tienes cuenta? Regístrate aquí</button>
+      </div>
+      <div class="switch-link" style="margin-top: 5px;">
+        <button type="button" onclick="showScreen('screen-recover-pass')">¿Olvidaste tu contraseña?</button>
+      </div>
+      <button onclick="showScreen('screen-home')" class="btn btn-back">Volver</button>
+    </section>
+
+    <section id="screen-register-client" class="screen hidden">
+      <h2>Registro de Cliente</h2>
+      <form onsubmit="handleRegisterClient(event)">
+        <div class="form-group">
+          <label for="reg-nombre">Nombre y Apellido (Solo texto):</label>
+          <input type="text" id="reg-nombre" class="uppercase-input" placeholder="Ej: JUAN PEREZ" oninput="validateTextOnly(this)" required>
+        </div>
+        <div class="form-group">
+          <label for="reg-cedula">Cédula de Identidad:</label>
+          <div class="cedula-input-group">
+            <select id="reg-nac">
+              <option value="V">V</option>
+              <option value="E">E</option>
+            </select>
+            <input type="text" id="reg-cedula" placeholder="Ej: 12345678" oninput="validateDigits(this, 9)" required>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="reg-telefono">Teléfono (Ej: 04121234567):</label>
+          <input type="text" id="reg-telefono" placeholder="04XXXXXXXXX" oninput="validateDigits(this, 11)" required>
+        </div>
+        <div class="form-group">
+          <label for="reg-direccion">Dirección exacta de entrega:</label>
+          <textarea id="reg-direccion" rows="2" placeholder="Calle, Casa/Apto, Punto de referencia" required></textarea>
+        </div>
+        <div class="form-group">
+          <label for="reg-pass">Crea una Contraseña:</label>
+          <input type="password" id="reg-pass" placeholder="Mínimo 4 caracteres" required>
+        </div>
+        <div class="form-group">
+          <label for="reg-preg1">1ra Pregunta de Seguridad:</label>
+          <select id="reg-preg1" required>
+            <option value="">-- Selecciona una pregunta --</option>
+            <option value="COLOR">¿Cuál es tu color favorito?</option>
+            <option value="MASCOTA">¿Nombre de tu primera mascota?</option>
+            <option value="CIUDAD">¿En qué ciudad naciste?</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="reg-resp1">Respuesta 1 (Solo texto):</label>
+          <input type="text" id="reg-resp1" class="uppercase-input" placeholder="Tu respuesta" oninput="validateTextOnly(this)" required>
+        </div>
+        <div class="form-group">
+          <label for="reg-preg2">2da Pregunta de Seguridad:</label>
+          <select id="reg-preg2" required>
+            <option value="">-- Selecciona una pregunta --</option>
+            <option value="COMIDA">¿Cuál es tu comida favorita?</option>
+            <option value="LICEO">¿Nombre de tu colegio/liceo?</option>
+            <option value="CANCION">¿Canción o artista favorito?</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="reg-resp2">Respuesta 2 (Solo texto):</label>
+          <input type="text" id="reg-resp2" class="uppercase-input" placeholder="Tu respuesta" oninput="validateTextOnly(this)" required>
+        </div>
+        <button type="submit" class="btn btn-success">Completar Registro</button>
+      </form>
+      <button onclick="showScreen('screen-login-client')" class="btn btn-back">Volver al Login</button>
+    </section>
+
+    <section id="screen-recover-pass" class="screen hidden">
+      <h2>Recuperar Contraseña</h2>
+      <form onsubmit="handleRecoverPass(event)">
+        <div class="form-group">
+          <label for="rec-cedula">Ingresa tu Cédula:</label>
+          <div class="cedula-input-group">
+            <select id="rec-nac" onchange="checkRecoveryLabels()">
+              <option value="V">V</option>
+              <option value="E">E</option>
+            </select>
+            <input type="text" id="rec-cedula" placeholder="Ej: 12345678" oninput="validateDigits(this, 9); checkRecoveryLabels();" required>
+          </div>
+        </div>
+        <div class="form-group">
+          <label id="rec-label-preg1" style="font-weight: bold; color: var(--pink-accent);">1ra Pregunta Registrada:</label>
+          <input type="text" id="rec-resp1" class="uppercase-input" placeholder="Tu respuesta" oninput="validateTextOnly(this)" required>
+        </div>
+        <div class="form-group">
+          <label id="rec-label-preg2" style="font-weight: bold; color: var(--pink-accent);">2da Pregunta Registrada:</label>
+          <input type="text" id="rec-resp2" class="uppercase-input" placeholder="Tu respuesta" oninput="validateTextOnly(this)" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Verificar Respuestas</button>
+      </form>
+      <button onclick="showScreen('screen-login-client')" class="btn btn-back">Volver al Login</button>
+    </section>
+        <section id="screen-login-admin" class="screen hidden">
+      <h2>Acceso Administrador</h2>
+      <form onsubmit="handleLoginAdmin(event)">
+        <div class="form-group">
+          <label for="admin-pass">Clave de Administrador:</label>
+          <input type="password" id="admin-pass" placeholder="Ingresa la clave" required>
+        </div>
+        <button type="submit" class="btn btn-secondary">Ingresar al Panel</button>
+      </form>
+      <button onclick="showScreen('screen-home')" class="btn btn-back">Volver</button>
+    </section>
+
+    <section id="screen-catalog" class="screen hidden">
+      <div id="user-welcome-bar" class="user-welcome-card">
+        <span class="user-badge" id="welcome-user-text">Hola, Cliente</span>
+        <button onclick="logout()" class="btn btn-sm btn-back">Cerrar Sesión</button>
+      </div>
+
+      <div id="store-closed-screen" class="store-closed-screen-card hidden">
+        <h3>🔴 COMERCIO CERRADO POR HOY</h3>
+        <p>No se están recibiendo pedidos en este momento.</p>
+        <div class="schedule-badge">⏰ Horario de Atención: Lunes a Sábado de 8:00 AM a 6:00 PM</div>
+      </div>
+
+      <div id="catalog-content-wrapper">
+        <h2 style="margin-bottom: 10px;">Catálogo de Productos</h2>
+
+        <div class="search-box">
+          <span class="search-icon">🔍</span>
+          <input type="text" id="search-input" placeholder="Buscar producto en todo el negocio..." oninput="handleSearchInput(this.value)">
+        </div>
+
+        <div class="category-bar">
+          <button type="button" class="btn btn-sm btn-back" id="cat-btn-carnes" onclick="filterCategory('carnes')">🥩 Carnes</button>
+          <button type="button" class="btn btn-sm btn-back" id="cat-btn-charcuteria" onclick="filterCategory('charcuteria')">🧀 Charcutería</button>
+          <button type="button" class="btn btn-sm btn-back" id="cat-btn-viveres" onclick="filterCategory('viveres')">🌾 Víveres</button>
+          <button type="button" class="btn btn-sm btn-back" id="cat-btn-limpieza" onclick="filterCategory('limpieza')">🧹 Limpieza</button>
+          <button type="button" class="btn btn-sm btn-back" id="cat-btn-confiteria" onclick="filterCategory('confiteria')">🍬 Confitería</button>
+        </div>
+
+        <div class="product-grid" id="product-list"></div>
+
+        <div class="cart-card">
+          <h3>🛒 Carrito de Compras</h3>
+          <div class="cart-items-container" id="cart-items-list">
+            <p class="empty-cart">No has seleccionado ningún producto aún.</p>
+          </div>
+          <div class="delivery-badge-box">
+            <span>🛵 Delivery (Altagracia de Orituco):</span>
+            <strong style="color:var(--pink-accent);">$1.00 <small style="font-size:0.75rem; color:var(--text-muted);">(876,80 Bs.)</small></strong>
+          </div>
+          <div class="cart-summary">
+            <div>Total Final (con Delivery): <span class="total-usd" id="cart-total-usd">$0.00</span></div>
+            <div class="total-bs">Ref. <span id="cart-total-bs">0,00</span> Bs.</div>
+          </div>
+
+          <div class="card-box" style="padding: 10px; background: #fffde7; border: 1px solid #ffe082; margin-bottom: 12px;">
+            <p style="font-size: 0.82rem; font-weight: bold; color: #d84315; margin-bottom: 4px;">📍 Datos de Pago Móvil — Porkys C.A</p>
+            <p style="font-size: 0.78rem;" id="client-bank-info-display">
+              🏦 Bancos del Comercio: BANCO DE VENEZUELA (0102) / BANESCO (0134)<br>
+              🆔 Cédula / RIF: 22884330<br>
+              📞 Teléfono: 04140501220
+            </p>
+          </div>
+
+          <form id="form-order-submit" onsubmit="handleOrderSubmit(event)">
+            <h4 style="font-size: 0.88rem; color: var(--pink-accent); margin-bottom: 8px;">💳 Registra tu Pago Móvil Realizado</h4>
+
+            <div class="form-group">
+              <label for="order-bank-source">Banco desde el que pagaste:</label>
+              <select id="order-bank-source" required>
+                <option value="">-- Selecciona tu banco --</option>
+                <option value="BANCO DE VENEZUELA">BANCO DE VENEZUELA</option>
+                <option value="BANESCO">BANESCO</option>
+                <option value="MERCANTIL">MERCANTIL</option>
+                <option value="PROVINCIAL">PROVINCIAL</option>
+                <option value="BNC">BNC</option>
+                <option value="BANCAMIGA">BANCAMIGA</option>
+                <option value="OTRO BANCO">OTRO BANCO</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="order-bank-dest">Banco del comercio al que transferiste:</label>
+              <select id="order-bank-dest" required></select>
+            </div>
+
+            <div class="form-group">
+              <label for="order-amount-bs">Monto transferido o abonado (Bs.):</label>
+              <input type="text" id="order-amount-bs" placeholder="Ej: 13.134,76" oninput="formatAmountInput(this)" required>
+            </div>
+
+            <div class="form-group">
+              <label for="order-ref">Número de Referencia * (Obligatorio):</label>
+              <input type="text" id="order-ref" placeholder="Ej: 12345678" oninput="validateDigits(this, 12)" required>
+            </div>
+
+            <div class="form-group">
+              <label for="order-proof">Adjuntar Capture de Pago * (Obligatorio):</label>
+              <input type="file" id="order-proof" accept="image/*" required>
+            </div>
+
+            <button type="submit" class="btn btn-success" id="btn-submit-order">Confirmar y Enviar Pedido</button>
+          </form>
+        </div>
+
+        <div id="client-order-status-wrapper" class="order-status-box hidden">
+          <h3 style="font-size: 0.95rem; color: var(--bg-dark); margin-bottom: 6px;">Status de tu Pedido Activo</h3>
+          <p id="client-order-status-text" style="font-size: 0.85rem;">Cargando información del pedido...</p>
+        </div>
+      </div>
+    </section>
+        <section id="screen-admin-panel" class="screen hidden">
+      <div class="admin-top-bar">
+        <h2>Panel de Administración</h2>
+        <button onclick="showScreen('screen-home')" class="btn btn-sm btn-back">Cerrar Sesión</button>
+      </div>
+
+      <div class="card-box">
+        <h3 style="font-size: 0.95rem; color: var(--pink-accent); margin-bottom: 8px;">Estado y Configuración de la Tienda</h3>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 10px;">
+          <span style="font-size:0.85rem; font-weight:bold;">Estado del Comercio:</span>
+          <button id="toggle-store-btn" onclick="toggleStoreStatus()" class="btn btn-sm btn-success">🟢 ABIERTO</button>
+        </div>
+        <div class="form-group">
+          <label for="exchange-rate-input">Tasa de Cambio Oficial (Bs. por $):</label>
+          <input type="number" step="0.01" id="exchange-rate-input" placeholder="Ej: 60.00" onchange="updateExchangeRate(this.value)">
+        </div>
+      </div>
+
+      <div class="card-box" style="padding: 8px;">
+        <button type="button" class="collapsible-btn" onclick="toggleBox('box-inventory')">
+          <span>📦 Control de Stock e Inventario</span>
+          <span>▼</span>
+        </button>
+        <div id="box-inventory" class="collapsible-content hidden">
+          <div class="category-bar" style="margin-bottom: 8px;">
+            <button type="button" class="btn btn-sm btn-back" onclick="filterAdminInventoryCategory('carnes')">🥩 Carnes</button>
+            <button type="button" class="btn btn-sm btn-back" onclick="filterAdminInventoryCategory('charcuteria')">🧀 Charcutería</button>
+            <button type="button" class="btn btn-sm btn-back" onclick="filterAdminInventoryCategory('viveres')">🌾 Víveres</button>
+            <button type="button" class="btn btn-sm btn-back" onclick="filterAdminInventoryCategory('limpieza')">🧹 Limpieza</button>
+            <button type="button" class="btn btn-sm btn-back" onclick="filterAdminInventoryCategory('confiteria')">🍬 Confitería</button>
+          </div>
+          <div id="admin-inventory-list"></div>
+        </div>
+      </div>
+
+      <div class="card-box" style="padding: 8px;">
+        <button type="button" class="collapsible-btn" onclick="toggleBox('box-prices')">
+          <span>💵 Ajustar Precios y Eliminar</span>
+          <span>▼</span>
+        </button>
+        <div id="box-prices" class="collapsible-content hidden">
+          <div class="category-bar" style="margin-bottom: 8px;">
+            <button type="button" class="btn btn-sm btn-back" onclick="filterAdminCategory('carnes')">🥩 Carnes</button>
+            <button type="button" class="btn btn-sm btn-back" onclick="filterAdminCategory('charcuteria')">🧀 Charcutería</button>
+            <button type="button" class="btn btn-sm btn-back" onclick="filterAdminCategory('viveres')">🌾 Víveres</button>
+            <button type="button" class="btn btn-sm btn-back" onclick="filterAdminCategory('limpieza')">🧹 Limpieza</button>
+            <button type="button" class="btn btn-sm btn-back" onclick="filterAdminCategory('confiteria')">🍬 Confitería</button>
+          </div>
+          <div id="admin-price-list"></div>
+        </div>
+      </div>
+
+      <div class="card-box" style="padding: 8px;">
+        <button type="button" class="collapsible-btn" onclick="toggleBox('box-add-product')">
+          <span>➕ Agregar Producto</span>
+          <span>▼</span>
+        </button>
+        <div id="box-add-product" class="collapsible-content hidden">
+          <form id="form-add-product" onsubmit="handleAddProduct(event)">
+            <div class="form-group">
+              <label for="new-prod-name">Nombre del Producto (Solo texto):</label>
+              <input type="text" id="new-prod-name" class="uppercase-input" placeholder="EJ: JABON EN POLVO" oninput="validateTextOnly(this)" required>
+            </div>
+            <div class="form-group">
+              <label for="new-prod-cat">Categoría:</label>
+              <select id="new-prod-cat" required>
+                <option value="carnes">Carnes / Pollos / Cochino</option>
+                <option value="charcuteria">Charcutería / Lácteos</option>
+                <option value="viveres">Víveres / Despensa</option>
+                <option value="limpieza">Productos de Limpieza</option>
+                <option value="confiteria">Confitería / Snacks</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="new-prod-unit">Unidad de Medida / Venta:</label>
+              <select id="new-prod-unit">
+                <option value="Gr">Por Gramos (Inicia en 200g)</option>
+                <option value="Unid">Por Unidad (1 Unid por toque)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="new-prod-price">Precio ($):</label>
+              <input type="number" step="0.01" id="new-prod-price" placeholder="Ej: 1.50" required>
+            </div>
+            <div class="form-group">
+              <label for="new-prod-stock">Stock Inicial (Cantidad disponible):</label>
+              <input type="number" step="any" id="new-prod-stock" placeholder="Ej: 25" value="20" required>
+            </div>
+            <button type="submit" class="btn btn-success">Agregar al Catálogo</button>
+          </form>
+        </div>
+      </div>
+
+      <div class="card-box" style="padding: 8px;">
+        <button type="button" class="collapsible-btn" onclick="toggleBox('box-change-pass')">
+          <span>🔑 Cambiar Clave de Administrador</span>
+          <span>▼</span>
+        </button>
+        <div id="box-change-pass" class="collapsible-content hidden">
+          <form onsubmit="handleChangeAdminPass(event)">
+            <div class="form-group">
+              <label for="new-admin-pass">Nueva Clave:</label>
+              <input type="password" id="new-admin-pass" placeholder="Ingresa la nueva clave" required>
+            </div>
+            <button type="submit" class="btn btn-warning">Actualizar Clave</button>
+          </form>
+        </div>
+      </div>
+
+      <div class="card-box">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 10px;">
+          <h3 style="font-size: 0.95rem; color: var(--pink-accent);">📋 Pedidos Recibidos</h3>
+          <button onclick="handleShiftClose()" class="btn btn-sm btn-warning">📊 Cierre de Jornada</button>
+        </div>
+        <div id="admin-orders-list">
+          <p class="empty-orders">No hay pedidos pendientes en este momento.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+    <div id="proof-modal" class="modal-overlay hidden">
+    <div class="modal-content">
+      <h3>Comprobante de Pago</h3>
+      <div id="proof-image-container" style="text-align: center; margin: 10px 0;">
+        <img id="proof-img" src="" alt="Comprobante" style="max-width: 100%; max-height: 250px; border-radius: 8px; border: 1px solid #ccc;">
+      </div>
+      <button onclick="closeProofModal()" class="btn btn-back">Cerrar</button>
+    </div>
+  </div>
+
+  <div id="shift-modal" class="modal-overlay hidden">
+    <div class="modal-content">
+      <h3>Resumen Cierre de Jornada</h3>
+      <div id="shift-details" class="modal-details"></div>
+      <div class="modal-actions">
+        <button onclick="confirmResetShift()" class="btn btn-danger">Reiniciar Cuadre</button>
+        <button onclick="closeShiftModal()" class="btn btn-back">Cerrar</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    var defaultProducts = [
+      { id: 101, name: 'MUSLO DE POLLO', price: 4.50, unit: 'Gr', category: 'carnes', stock: 30, available: true },
+      { id: 102, name: 'PECHUGA DE POLLO', price: 6.00, unit: 'Gr', category: 'carnes', stock: 30, available: true },
+      { id: 103, name: 'ALAS DE POLLO', price: 4.80, unit: 'Gr', category: 'carnes', stock: 25, available: true },
+
+      { id: 201, name: 'QUESO BLANCO DURO', price: 6.00, unit: 'Gr', category: 'charcuteria', stock: 30, available: true },
+      { id: 202, name: 'QUESO PAISA', price: 7.50, unit: 'Gr', category: 'charcuteria', stock: 20, available: true },
+      { id: 203, name: 'JAMÓN DE PIERNA', price: 8.00, unit: 'Gr', category: 'charcuteria', stock: 25, available: true },
+      { id: 204, name: 'MORTADELA PEQUEÑA (PIEZA 400G)', price: 2.00, unit: 'Unid', category: 'charcuteria', stock: 15, available: true },
+      { id: 205, name: 'MORTADELA GRANDE (PIEZA 900G)', price: 4.50, unit: 'Unid', category: 'charcuteria', stock: 10, available: true },
+
+      { id: 301, name: 'HARINA PAN (1 KG)', price: 1.10, unit: 'Unid', category: 'viveres', stock: 50, available: true },
+      { id: 302, name: 'PASTA PRIMOR (1 KG)', price: 1.30, unit: 'Unid', category: 'viveres', stock: 40, available: true },
+      { id: 303, name: 'ACEITE VEGETAL (1 LTR)', price: 2.50, unit: 'Unid', category: 'viveres', stock: 30, available: true },
+      { id: 304, name: 'MAYONESA KRAFT (445G)', price: 3.20, unit: 'Unid', category: 'viveres', stock: 25, available: true },
+      { id: 305, name: 'CASABE', price: 2.40, unit: 'Unid', category: 'viveres', stock: 59, available: true },
+      { id: 306, name: 'ARROZ MARY DORADO', price: 1.69, unit: 'Unid', category: 'viveres', stock: 9, available: true },
+      { id: 307, name: 'PRIMOR CREMA DE ARROZ', price: 1.56, unit: 'Unid', category: 'viveres', stock: 11, available: true },
+      { id: 308, name: 'LECHE AMANECER', price: 17.87, unit: 'Unid', category: 'viveres', stock: 6, available: true },
+      { id: 309, name: 'LECHE AMANECER PEQUEÑA', price: 7.29, unit: 'Unid', category: 'viveres', stock: 5, available: true },
+      { id: 310, name: 'AVENA EN HOJUELAS', price: 1.95, unit: 'Unid', category: 'viveres', stock: 1, available: true },
+      { id: 311, name: 'HARINA DE AVENA', price: 1.56, unit: 'Unid', category: 'viveres', stock: 4, available: true },
+      { id: 312, name: 'CAFE DELLA NONNA MEDIO KILO', price: 8.45, unit: 'Unid', category: 'viveres', stock: 1, available: true },
+      { id: 313, name: 'CAFE DELLA NONNA DOSCIENTOS GRAMOS', price: 3.24, unit: 'Unid', category: 'viveres', stock: 35, available: true },
+      { id: 314, name: 'CAFE AMANECER DOSCIENTOS GRAMOS', price: 3.24, unit: 'Unid', category: 'viveres', stock: 8, available: true },
+      { id: 315, name: 'CAFE AMANECER MEDIO KILO', price: 7.80, unit: 'Unid', category: 'viveres', stock: 4, available: true },
+      { id: 316, name: 'TODDY CUATROCIENTOS GRAMOS', price: 6.47, unit: 'Unid', category: 'viveres', stock: 7, available: true },
+      { id: 317, name: 'TODDY DOSCIENTOS', price: 3.77, unit: 'Unid', category: 'viveres', stock: 2, available: true },
+      { id: 318, name: 'AZUCARADAS', price: 4.09, unit: 'Unid', category: 'viveres', stock: 3, available: true },
+      { id: 319, name: 'ARROZ MARY TRADICIONAL', price: 1.39, unit: 'Unid', category: 'viveres', stock: 5, available: true },
+      { id: 320, name: 'ARROZ AMANECER', price: 1.21, unit: 'Unid', category: 'viveres', stock: 25, available: true },
+      { id: 321, name: 'ARROZ PRIMOR TRADICIONAL', price: 1.95, unit: 'Unid', category: 'viveres', stock: 14, available: true },
+      { id: 322, name: 'ARROZ PRIMOR SUPERIOR', price: 1.95, unit: 'Unid', category: 'viveres', stock: 21, available: true },
+      { id: 323, name: 'AZUCAR AURORA', price: 1.95, unit: 'Unid', category: 'viveres', stock: 35, available: true },
+      { id: 324, name: 'AZUCAR AMANECER', price: 1.92, unit: 'Unid', category: 'viveres', stock: 46, available: true },
+      { id: 325, name: 'HARINA PAN DE ARROZ', price: 1.60, unit: 'Unid', category: 'viveres', stock: 12, available: true },
+      { id: 326, name: 'HARINA DE TRIGO MARY LEUDANTE', price: 1.16, unit: 'Unid', category: 'viveres', stock: 7, available: true },
+      { id: 327, name: 'HARINA DE TRIGO MARY TODO USO', price: 1.11, unit: 'Unid', category: 'viveres', stock: 4, available: true },
+      { id: 328, name: 'ARROZ MARY ESMERALDA', price: 1.91, unit: 'Unid', category: 'viveres', stock: 74, available: true },
+      { id: 329, name: 'MAVESA MAYONESA', price: 4.55, unit: 'Unid', category: 'viveres', stock: 9, available: true },
+      { id: 330, name: 'RIKESA', price: 7.57, unit: 'Unid', category: 'viveres', stock: 5, available: true },
+      { id: 331, name: 'PAMPERO KETCHUP', price: 2.60, unit: 'Unid', category: 'viveres', stock: 14, available: true },
+      { id: 332, name: 'MAZEITE UN LITRO', price: 6.24, unit: 'Unid', category: 'viveres', stock: 1, available: true },
+      { id: 333, name: 'AURORA ACEITE', price: 4.55, unit: 'Unid', category: 'viveres', stock: 10, available: true },
+      { id: 334, name: 'MOSTAZA FRITZ CIENTO SESENTA GRAMOS', price: 1.40, unit: 'Unid', category: 'viveres', stock: 9, available: true },
+      { id: 335, name: 'MOSTAZA IBERIA DOSCIENTO CIENCUENTA GRAMOS', price: 3.29, unit: 'Unid', category: 'viveres', stock: 3, available: true },
+      { id: 336, name: 'MAVESA MARGARINA MEDIO KILO', price: 3.50, unit: 'Unid', category: 'viveres', stock: 7, available: true },
+      { id: 337, name: 'MAVESA MARGARINA UN KILO', price: 6.57, unit: 'Unid', category: 'viveres', stock: 5, available: true },
+      { id: 338, name: 'SAL MERU', price: 0.79, unit: 'Unid', category: 'viveres', stock: 60, available: true },
+      { id: 339, name: 'IBERIA SALSA BOLOGÑESA CIENTO NOVENT GR', price: 3.02, unit: 'Unid', category: 'viveres', stock: 11, available: true },
+      { id: 340, name: 'IBERIA SALSA COMPLETA CIENTO NOVENTA GR', price: 3.14, unit: 'Unid', category: 'viveres', stock: 19, available: true },
+      { id: 341, name: 'IBERIA SALSA DE TOMATE MIX CIENTO NIVENTA GR', price: 3.02, unit: 'Unid', category: 'viveres', stock: 8, available: true },
+      { id: 342, name: 'ACEITUNAS VERDES ENTERAS', price: 2.26, unit: 'Unid', category: 'viveres', stock: 11, available: true },
+      { id: 343, name: 'PICANTE PIRI PIRI', price: 2.68, unit: 'Unid', category: 'viveres', stock: 9, available: true },
+      { id: 344, name: 'SALSA DE AJO', price: 1.56, unit: 'Unid', category: 'viveres', stock: 16, available: true },
+      { id: 345, name: 'SALSA DE SOYA', price: 2.17, unit: 'Unid', category: 'viveres', stock: 27, available: true },
+      { id: 346, name: 'SALSA INGLESA', price: 2.17, unit: 'Unid', category: 'viveres', stock: 20, available: true },
+      { id: 347, name: 'VINAGRE DE MANZANA MEDIO LT', price: 1.95, unit: 'Unid', category: 'viveres', stock: 19, available: true },
+      { id: 348, name: 'MAVESA VINAGRE UN LITRO', price: 2.70, unit: 'Unid', category: 'viveres', stock: 20, available: true },
+      { id: 349, name: 'VINAGRE MEDIO LITRO', price: 1.61, unit: 'Unid', category: 'viveres', stock: 24, available: true },
+      { id: 350, name: 'CARBON PEQUEÑO', price: 2.60, unit: 'Unid', category: 'viveres', stock: 17, available: true },
+      { id: 351, name: 'CARBON GRANDE', price: 7.80, unit: 'Unid', category: 'viveres', stock: 3, available: true },
+      { id: 352, name: 'DEDAL PRIMOR UN KILO', price: 1.30, unit: 'Unid', category: 'viveres', stock: 14, available: true },
+      { id: 353, name: 'ATUN MARGARITA CIENTO SETENTA GR', price: 1.80, unit: 'Unid', category: 'viveres', stock: 8, available: true },
+      { id: 354, name: 'PEPITONAS MARGARITA CIENTO CUARENTA GR', price: 1.60, unit: 'Unid', category: 'viveres', stock: 4, available: true },
+      { id: 355, name: 'SARDINA MARGARITA EN SALSA DE TOMATE', price: 1.20, unit: 'Unid', category: 'viveres', stock: 17, available: true },
+      { id: 356, name: 'HUEVOS', price: 0.20, unit: 'Unid', category: 'viveres', stock: 50, available: true },
+      { id: 357, name: 'REFRESCO COCA COLA DOS LT', price: 2.50, unit: 'Unid', category: 'viveres', stock: 60, available: true },
+      { id: 358, name: 'VERMICELLI DELLA NONNA UN KILO', price: 1.30, unit: 'Unid', category: 'viveres', stock: 45, available: true },
+      { id: 359, name: 'TORNILLO DELLA NONNA', price: 1.30, unit: 'Unid', category: 'viveres', stock: 21, available: true },
+
+      { id: 401, name: 'DETERGENTE EN POLVO (1 KG)', price: 2.20, unit: 'Unid', category: 'limpieza', stock: 30, available: true },
+      { id: 402, name: 'JABÓN LÍQUIDO MULTIUSO (1 LTR)', price: 1.80, unit: 'Unid', category: 'limpieza', stock: 25, available: true },
+      { id: 403, name: 'CLORO CONCENTRADO (1 LTR)', price: 1.00, unit: 'Unid', category: 'limpieza', stock: 40, available: true },
+      { id: 404, name: 'LAVAPLATOS LÍQUIDO', price: 1.50, unit: 'Unid', category: 'limpieza', stock: 35, available: true },
+      { id: 405, name: 'DESINFECTANTE AROMA LAVANDA', price: 1.20, unit: 'Unid', category: 'limpieza', stock: 30, available: true },
+      { id: 406, name: 'LAVAPLATOS LIQUIDO BUENISIMO', price: 1.50, unit: 'Unid', category: 'limpieza', stock: 7, available: true },
+      { id: 407, name: 'DESINFECTANTE BUENISMO CHERRY', price: 1.20, unit: 'Unid', category: 'limpieza', stock: 1, available: true },
+      { id: 408, name: 'DESINFECTE BUENISIMO LAVANDA', price: 1.20, unit: 'Unid', category: 'limpieza', stock: 2, available: true },
+      { id: 409, name: 'JABON EN POLVO ACE', price: 2.20, unit: 'Unid', category: 'limpieza', stock: 5, available: true },
+      { id: 410, name: 'JABON EN POLVO LAS LLAVES BEBE', price: 2.50, unit: 'Unid', category: 'limpieza', stock: 3, available: true },
+      { id: 411, name: 'JABON EN POLVO LAS LLAVES LIMPIEZA ACTIVA', price: 2.50, unit: 'Unid', category: 'limpieza', stock: 8, available: true },
+      { id: 412, name: 'PAPEL ROSAL CUATRO ROLLOS', price: 2.00, unit: 'Unid', category: 'limpieza', stock: 26, available: true },
+      { id: 413, name: 'PAPEL HIEGIENICO GADUSOFTY', price: 1.80, unit: 'Unid', category: 'limpieza', stock: 10, available: true },
+      { id: 414, name: 'SERVILLETAS GADUSOFTY', price: 1.20, unit: 'Unid', category: 'limpieza', stock: 31, available: true },
+
+      { id: 501, name: 'CHOCOLATE SAVOY (130G)', price: 2.00, unit: 'Unid', category: 'confiteria', stock: 30, available: true },
+      { id: 502, name: 'GALLETAS SUSY', price: 0.80, unit: 'Unid', category: 'confiteria', stock: 50, available: true },
+      { id: 503, name: 'GALLETA SODA EL SOL', price: 1.95, unit: 'Unid', category: 'confiteria', stock: 25, available: true },
+      { id: 504, name: 'GALLETA LIMON TV', price: 1.53, unit: 'Unid', category: 'confiteria', stock: 20, available: true },
+      { id: 505, name: 'GALLETA CHIPS AHOY', price: 5.00, unit: 'Unid', category: 'confiteria', stock: 15, available: true },
+      { id: 506, name: 'GALLETA CLUB SOCIAL', price: 2.40, unit: 'Unid', category: 'confiteria', stock: 30, available: true },
+      { id: 507, name: 'GALLETA MARIA', price: 2.60, unit: 'Unid', category: 'confiteria', stock: 25, available: true },
+      { id: 508, name: 'GALLETA MARIA CALEDONIA', price: 1.69, unit: 'Unid', category: 'confiteria', stock: 20, available: true }
+    ];
+        var catalogProducts = defaultProducts;
+    var exchangeRate = 60.00;
+    var registeredClients = {};
+    var allOrdersList = [];
+    var currentAdminPass = 'admin123';
+    var isStoreOpen = true;
+    var currentCart = [];
+    var activeUser = null;
+    var currentCategoryFilter = 'carnes';
+    var currentAdminCategoryFilter = 'carnes';
+    var currentAdminInventoryCategoryFilter = 'carnes';
+    var searchQuery = '';
+    var storeRif = '22884330';
+    var storePhone = '04140501220';
+    var storeReceiverBanks = ['BANCO DE VENEZUELA (0102)', 'BANESCO (0134)'];
+
+    window.addEventListener('firebase-ready', function() {
+      initFirebaseSync();
+    });
+
+    function showScreen(screenId) {
+      var screens = document.querySelectorAll('.screen');
+      for (var i = 0; i < screens.length; i++) {
+        screens[i].classList.add('hidden');
+      }
+      var target = document.getElementById(screenId);
+      if (target) target.classList.remove('hidden');
+      window.scrollTo(0, 0);
+    }
+
+    function showAlert(msg, isSuccess) {
+      var box = document.getElementById('alert-box');
+      if (!box) return;
+      box.textContent = msg;
+      box.className = 'alert-box ' + (isSuccess ? 'success' : 'error');
+      box.classList.remove('hidden');
+      setTimeout(function() {
+        box.classList.add('hidden');
+      }, 4000);
+    }
+
+    function validateDigits(input, maxLen) {
+      input.value = input.value.replace(/\D/g, '');
+      if (maxLen && input.value.length > maxLen) {
+        input.value = input.value.substring(0, maxLen);
+      }
+    }
+
+    function validateTextOnly(input) {
+      input.value = input.value.replace(/[^A-Za-záéíóúÁÉÍÓÚñÑ\s]/g, '').toUpperCase();
+    }
+
+    function formatAmountInput(input) {
+      var val = input.value.replace(/[^0-9]/g, '');
+      if (!val) {
+        input.value = '';
+        return;
+      }
+      var num = parseInt(val, 10) / 100;
+      input.value = num.toLocaleString('es-VE', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
+
+    function toggleBox(boxId) {
+      var box = document.getElementById(boxId);
+      if (box) box.classList.toggle('hidden');
+    }
+
+    function initFirebaseSync() {
+      var db = window.db;
+      var fc = window.firebaseCollections;
+      if (!db || !fc) return;
+
+      fc.onSnapshot(fc.collection(db, 'porkys_products'), function(snapshot) {
+        if (!snapshot.empty) {
+          var loaded = [];
+          snapshot.forEach(function(docSnap) {
+            loaded.push({ id: docSnap.id, ...docSnap.data() });
+          });
+          catalogProducts = loaded;
+        } else {
+          for (var i = 0; i < defaultProducts.length; i++) {
+            fc.setDoc(fc.doc(db, 'porkys_products', String(defaultProducts[i].id)), defaultProducts[i]);
+          }
+        }
+        renderCatalog();
+        renderAdminInventory();
+        renderAdminPrices();
+      });
+
+      fc.onSnapshot(fc.collection(db, 'porkys_clients'), function(snapshot) {
+        registeredClients = {};
+        snapshot.forEach(function(docSnap) {
+          registeredClients[docSnap.id] = docSnap.data();
+        });
+      });
+
+      fc.onSnapshot(fc.doc(db, 'porkys_config', 'store_settings'), function(docSnap) {
+        if (docSnap.exists()) {
+          var data = docSnap.data();
+          if (data.exchangeRate) {
+            exchangeRate = data.exchangeRate;
+            var exInput = document.getElementById('exchange-rate-input');
+            if (exInput) exInput.value = exchangeRate;
+          }
+          if (typeof data.isStoreOpen !== 'undefined') {
+            isStoreOpen = data.isStoreOpen;
+            updateStoreStatusUI();
+          }
+          if (data.storeRif) storeRif = data.storeRif;
+          if (data.storePhone) storePhone = data.storePhone;
+          if (data.storeReceiverBanks) storeReceiverBanks = data.storeReceiverBanks;
+          if (data.adminPass) currentAdminPass = data.adminPass;
+        } else {
+          fc.setDoc(fc.doc(db, 'porkys_config', 'store_settings'), {
+            exchangeRate: 60.00,
+            isStoreOpen: true,
+            storeRif: '22884330',
+            storePhone: '04140501220',
+            storeReceiverBanks: ['BANCO DE VENEZUELA (0102)', 'BANESCO (0134)'],
+            adminPass: 'admin123'
+          });
+        }
+        updateCatalogTotals();
+        renderPaymentBanksSelect();
+      });
+
+      fc.onSnapshot(fc.collection(db, 'porkys_orders'), function(snapshot) {
+        var orders = [];
+        snapshot.forEach(function(docSnap) {
+          orders.push({ id: docSnap.id, ...docSnap.data() });
+        });
+        allOrdersList = orders.sort(function(a, b) { return b.id - a.id; });
+        renderAdminOrders();
+        if (activeUser) renderClientOrderStatus();
+      });
+    }
+
+    function checkRecoveryLabels() {
+      var nac = document.getElementById('rec-nac').value;
+      var ced = document.getElementById('rec-cedula').value;
+      var fullCed = nac + '-' + ced;
+      var client = registeredClients[fullCed];
+      var lbl1 = document.getElementById('rec-label-preg1');
+      var lbl2 = document.getElementById('rec-label-preg2');
+      if (client) {
+        if (lbl1) lbl1.textContent = "1ra Pregunta: " + client.preg1;
+        if (lbl2) lbl2.textContent = "2da Pregunta: " + client.preg2;
+      } else {
+        if (lbl1) lbl1.textContent = "1ra Pregunta Registrada:";
+        if (lbl2) lbl2.textContent = "2da Pregunta Registrada:";
+      }
+    }
+        function handleRecoverPass(e) {
+      e.preventDefault();
+      var nac = document.getElementById('rec-nac').value;
+      var ced = document.getElementById('rec-cedula').value;
+      var fullCed = nac + '-' + ced;
+      var r1 = document.getElementById('rec-resp1').value.trim().toUpperCase();
+      var r2 = document.getElementById('rec-resp2').value.trim().toUpperCase();
+
+      var client = registeredClients[fullCed];
+      if (!client) {
+        showAlert("No existe un cliente registrado con esa cédula.", false);
+        return;
+      }
+
+      if (client.resp1 === r1 && client.resp2 === r2) {
+        showAlert("¡Preguntas correctas! Tu contraseña es: " + client.pass, true);
+        showScreen('screen-login-client');
+      } else {
+        showAlert("Las respuestas de seguridad no coinciden.", false);
+      }
+    }
+
+    function handleLoginClient(e) {
+      e.preventDefault();
+      var nac = document.getElementById('login-nac').value;
+      var ced = document.getElementById('login-cedula').value;
+      var fullCed = nac + '-' + ced;
+      var pass = document.getElementById('login-pass').value;
+
+      var client = registeredClients[fullCed];
+      if (!client) {
+        showAlert("No estás registrado. Por favor crea una cuenta.", false);
+        return;
+      }
+
+      if (client.pass === pass) {
+        activeUser = client;
+        document.getElementById('welcome-user-text').textContent = "Hola, " + client.nombre;
+        showScreen('screen-catalog');
+        renderCatalog();
+        renderClientOrderStatus();
+        showAlert("¡Bienvenido de nuevo " + client.nombre + "!", true);
+      } else {
+        showAlert("Contraseña incorrecta.", false);
+      }
+    }
+
+    function handleRegisterClient(e) {
+      e.preventDefault();
+      var nombre = document.getElementById('reg-nombre').value.trim().toUpperCase();
+      var nac = document.getElementById('reg-nac').value;
+      var ced = document.getElementById('reg-cedula').value;
+      var fullCed = nac + '-' + ced;
+      var telefono = document.getElementById('reg-telefono').value;
+      var direccion = document.getElementById('reg-direccion').value.trim();
+      var pass = document.getElementById('reg-pass').value;
+      var p1 = document.getElementById('reg-preg1').value;
+      var r1 = document.getElementById('reg-resp1').value.trim().toUpperCase();
+      var p2 = document.getElementById('reg-preg2').value;
+      var r2 = document.getElementById('reg-resp2').value.trim().toUpperCase();
+
+      if (registeredClients[fullCed]) {
+        showAlert("Esta cédula ya está registrada. Inicia sesión.", false);
+        return;
+      }
+
+      var newClientData = {
+        nombre: nombre,
+        cedula: fullCed,
+        telefono: telefono,
+        direccion: direccion,
+        pass: pass,
+        preg1: p1,
+        resp1: r1,
+        preg2: p2,
+        resp2: r2
+      };
+
+      var db = window.db;
+      var fc = window.firebaseCollections;
+      if (db && fc) {
+        fc.setDoc(fc.doc(db, 'porkys_clients', fullCed), newClientData);
+      }
+
+      activeUser = newClientData;
+      document.getElementById('welcome-user-text').textContent = "Hola, " + nombre;
+      showAlert("¡Registro completado con éxito!", true);
+      showScreen('screen-catalog');
+      renderCatalog();
+    }
+
+    function handleLoginAdmin(e) {
+      e.preventDefault();
+      var pass = document.getElementById('admin-pass').value;
+      if (pass === currentAdminPass) {
+        showScreen('screen-admin-panel');
+        renderAdminInventory();
+        renderAdminPrices();
+        renderAdminOrders();
+        showAlert("Bienvenido al Panel de Administración.", true);
+      } else {
+        showAlert("Clave de administrador incorrecta.", false);
+      }
+    }
+
+    function logout() {
+      activeUser = null;
+      currentCart = [];
+      showScreen('screen-home');
+    }
+
+    function filterCategory(cat) {
+      currentCategoryFilter = cat;
+      var btns = ['carnes', 'charcuteria', 'viveres', 'limpieza', 'confiteria'];
+      for (var i = 0; i < btns.length; i++) {
+        var b = document.getElementById('cat-btn-' + btns[i]);
+        if (b) {
+          if (btns[i] === cat) b.style.background = 'var(--pink-accent)';
+          else b.style.background = '#dfe4ea';
+        }
+      }
+      renderCatalog();
+    }
+
+    function handleSearchInput(val) {
+      searchQuery = val.toLowerCase().trim();
+      renderCatalog();
+      }
+        function renderCatalog() {
+      var container = document.getElementById('product-list');
+      if (!container) return;
+      var html = '';
+      var list = catalogProducts;
+
+      for (var i = 0; i < list.length; i++) {
+        var p = list[i];
+        if (!p.available) continue;
+        if (searchQuery) {
+          if (!p.name.toLowerCase().includes(searchQuery) && !p.category.includes(searchQuery)) continue;
+        } else {
+          if (p.category !== currentCategoryFilter) continue;
+        }
+
+        var priceBs = (p.price * exchangeRate).toLocaleString('es-VE', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        html += '<div class="product-card">' +
+                  '<div>' +
+                    '<h4>' + p.name + '</h4>' +
+                    '<div class="product-price">$' + p.price.toFixed(2) + ' <small style="font-size:0.7rem; color:var(--text-muted);">(' + priceBs + ' Bs.)</small></div>' +
+                    '<div class="product-stock">Stock: ' + p.stock + ' ' + (p.unit === 'Gr' ? 'g' : 'unid') + '</div>' +
+                  '</div>' +
+                  '<button type="button" class="btn btn-sm btn-primary" onclick="addToCart(\'' + p.id + '\')">➕ Agregar</button>' +
+                '</div>';
+      }
+
+      if (!html) {
+        html = '<p style="grid-column: 1/-1; text-align:center; color:var(--text-muted); padding:20px;">No se encontraron productos en esta categoría.</p>';
+      }
+      container.innerHTML = html;
+    }
+
+    function addToCart(prodId) {
+      var prod = null;
+      for (var i = 0; i < catalogProducts.length; i++) {
+        if (String(catalogProducts[i].id) === String(prodId)) {
+          prod = catalogProducts[i];
+          break;
+        }
+      }
+      if (!prod) return;
+
+      var stepQty = prod.unit === 'Gr' ? 200 : 1;
+      var existing = null;
+      for (var j = 0; j < currentCart.length; j++) {
+        if (String(currentCart[j].id) === String(prodId)) {
+          existing = currentCart[j];
+          break;
+        }
+      }
+
+      if (existing) {
+        if (existing.qty + stepQty > prod.stock) {
+          showAlert("Alcanzaste el límite de stock disponible para este producto.", false);
+          return;
+        }
+        existing.qty += stepQty;
+      } else {
+        if (stepQty > prod.stock) {
+          showAlert("Producto agotado o sin stock suficiente.", false);
+          return;
+        }
+        currentCart.push({
+          id: prod.id,
+          name: prod.name,
+          price: prod.price,
+          unit: prod.unit,
+          qty: stepQty
+        });
+      }
+      renderCart();
+    }
+
+    function updateCartQty(prodId, newQty) {
+      newQty = parseFloat(newQty);
+      if (isNaN(newQty) || newQty <= 0) {
+        removeFromCart(prodId);
+        return;
+      }
+
+      var prod = null;
+      for (var i = 0; i < catalogProducts.length; i++) {
+        if (String(catalogProducts[i].id) === String(prodId)) {
+          prod = catalogProducts[i];
+          break;
+        }
+      }
+
+      if (prod && newQty > prod.stock) {
+        showAlert("El stock máximo disponible es " + prod.stock + " " + (prod.unit === 'Gr' ? 'g' : 'unid'), false);
+        renderCart();
+        return;
+      }
+
+      for (var j = 0; j < currentCart.length; j++) {
+        if (String(currentCart[j].id) === String(prodId)) {
+          currentCart[j].qty = newQty;
+          break;
+        }
+      }
+      renderCart();
+    }
+
+    function removeFromCart(prodId) {
+      currentCart = currentCart.filter(function(item) {
+        return String(item.id) !== String(prodId);
+      });
+      renderCart();
+    }
+
+    function renderCart() {
+      var container = document.getElementById('cart-items-list');
+      if (!container) return;
+
+      if (currentCart.length === 0) {
+        container.innerHTML = '<p class="empty-cart">No has seleccionado ningún producto aún.</p>';
+        updateCatalogTotals();
+        return;
+      }
+
+      var html = '';
+      for (var i = 0; i < currentCart.length; i++) {
+        var item = currentCart[i];
+        var itemTotal = item.price * (item.unit === 'Gr' ? item.qty / 1000 : item.qty);
+        html += '<div class="cart-item-row">' +
+                  '<div style="flex:1;">' +
+                    '<strong>' + item.name + '</strong><br>' +
+                    '<small>$' + item.price.toFixed(2) + ' c/' + item.unit + '</small>' +
+                  '</div>' +
+                  '<div style="display:flex; align-items:center; gap:6px;">' +
+                    '<input type="number" step="' + (item.unit === 'Gr' ? '100' : '1') + '" value="' + item.qty + '" style="width:65px; padding:2px; text-align:center; border:1px solid #ccc; border-radius:4px;" onchange="updateCartQty(\'' + item.id + '\', this.value)">' +
+                    '<span style="font-size:0.75rem;">' + (item.unit === 'Gr' ? 'g' : 'unid') + '</span>' +
+                    '<button type="button" class="btn btn-sm btn-danger" style="padding:2px 6px;" onclick="removeFromCart(\'' + item.id + '\')">✕</button>' +
+                  '</div>' +
+                '</div>';
+      }
+      container.innerHTML = html;
+      updateCatalogTotals();
+    }
+        function updateCatalogTotals() {
+      var subtotalUSD = 0;
+      for (var i = 0; i < currentCart.length; i++) {
+        var item = currentCart[i];
+        subtotalUSD += item.price * (item.unit === 'Gr' ? item.qty / 1000 : item.qty);
+      }
+      var deliveryUSD = currentCart.length > 0 ? 1.00 : 0.00;
+      var totalUSD = subtotalUSD + deliveryUSD;
+      var totalBs = totalUSD * exchangeRate;
+
+      var usdEl = document.getElementById('cart-total-usd');
+      var bsEl = document.getElementById('cart-total-bs');
+      if (usdEl) usdEl.textContent = '$' + totalUSD.toFixed(2);
+      if (bsEl) bsEl.textContent = totalBs.toLocaleString('es-VE', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
+
+    function renderPaymentBanksSelect() {
+      var sel = document.getElementById('order-bank-dest');
+      if (!sel) return;
+      var html = '<option value="">-- Selecciona el banco de destino --</option>';
+      for (var i = 0; i < storeReceiverBanks.length; i++) {
+        html += '<option value="' + storeReceiverBanks[i] + '">' + storeReceiverBanks[i] + '</option>';
+      }
+      sel.innerHTML = html;
+    }
+
+    function handleOrderSubmit(e) {
+      e.preventDefault();
+
+      if (!isStoreOpen) {
+        showAlert("El comercio se encuentra CERRADO por hoy. No se pueden procesar pedidos.", false);
+        return;
+      }
+
+      if (currentCart.length === 0) {
+        showAlert("El carrito está vacío. Agrega productos antes de realizar tu pedido.", false);
+        return;
+      }
+
+      var bankSource = document.getElementById('order-bank-source').value;
+      var bankDest = document.getElementById('order-bank-dest').value;
+      var amountBs = document.getElementById('order-amount-bs').value;
+      var ref = document.getElementById('order-ref').value;
+      var fileInput = document.getElementById('order-proof');
+
+      if (!bankSource || !bankDest || !amountBs || !ref || fileInput.files.length === 0) {
+        showAlert("Por favor completa todos los datos del pago e incluye el comprobante.", false);
+        return;
+      }
+
+      var file = fileInput.files[0];
+      var reader = new FileReader();
+      reader.onload = function(evt) {
+        var proofDataUrl = evt.target.result;
+        var orderId = Date.now();
+
+        var subtotalUSD = 0;
+        for (var i = 0; i < currentCart.length; i++) {
+          var item = currentCart[i];
+          subtotalUSD += item.price * (item.unit === 'Gr' ? item.qty / 1000 : item.qty);
+        }
+        var totalUSD = subtotalUSD + 1.00;
+        var totalBs = totalUSD * exchangeRate;
+
+        var orderData = {
+          id: orderId,
+          client: activeUser,
+          items: currentCart,
+          totalUSD: totalUSD,
+          totalBs: totalBs,
+          bankSource: bankSource,
+          bankDest: bankDest,
+          amountBs: amountBs,
+          ref: ref,
+          proof: proofDataUrl,
+          status: 'ESPERANDO CONFIRMACION',
+          createdAt: new Date().toISOString()
+        };
+
+        var db = window.db;
+        var fc = window.firebaseCollections;
+        if (db && fc) {
+          fc.setDoc(fc.doc(db, 'porkys_orders', String(orderId)), orderData);
+        }
+
+        for (var k = 0; k < currentCart.length; k++) {
+          var cartItem = currentCart[k];
+          for (var m = 0; m < catalogProducts.length; m++) {
+            if (String(catalogProducts[m].id) === String(cartItem.id)) {
+              var newStock = catalogProducts[m].stock - cartItem.qty;
+              if (newStock < 0) newStock = 0;
+              if (db && fc) {
+                fc.updateDoc(fc.doc(db, 'porkys_products', String(cartItem.id)), { stock: newStock });
+              }
+              break;
+            }
+          }
+        }
+
+        currentCart = [];
+        renderCart();
+        document.getElementById('form-order-submit').reset();
+        showAlert("¡Pedido registrado con éxito! El comercio verificará tu pago.", true);
+        renderClientOrderStatus();
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function renderClientOrderStatus() {
+      var box = document.getElementById('client-order-status-wrapper');
+      var txt = document.getElementById('client-order-status-text');
+      if (!box || !txt || !activeUser) return;
+
+      var userOrders = allOrdersList.filter(function(o) {
+        return o.client && o.client.cedula === activeUser.cedula;
+      });
+
+      if (userOrders.length === 0) {
+        box.classList.add('hidden');
+        return;
+      }
+
+      var lastOrder = userOrders[0];
+      box.classList.remove('hidden');
+
+      var badgeClass = 'waiting';
+      if (lastOrder.status === 'EN PROCESO') badgeClass = 'processing';
+      if (lastOrder.status === 'EMPAQUETADO') badgeClass = 'packed';
+      if (lastOrder.status === 'EN CAMINO') badgeClass = 'on_the_way';
+      if (lastOrder.status === 'ENTREGADO') badgeClass = 'delivered';
+
+      txt.innerHTML = '<strong>Pedido #' + lastOrder.id + '</strong><br>' +
+                      'Monto Total: $' + lastOrder.totalUSD.toFixed(2) + ' (' + lastOrder.totalBs.toLocaleString('es-VE', {minimumFractionDigits:2}) + ' Bs.)<br>' +
+                      'Estado: <span class="status-badge ' + badgeClass + '">' + lastOrder.status + '</span>';
+    }
+        function updateStoreStatusUI() {
+      var btn = document.getElementById('toggle-store-btn');
+      var closedCard = document.getElementById('store-closed-screen');
+      var catalogContent = document.getElementById('catalog-content-wrapper');
+
+      if (isStoreOpen) {
+        if (btn) {
+          btn.className = 'btn btn-sm btn-success';
+          btn.textContent = '🟢 ABIERTO';
+        }
+        if (closedCard) closedCard.classList.add('hidden');
+      } else {
+        if (btn) {
+          btn.className = 'btn btn-sm btn-danger';
+          btn.textContent = '🔴 CERRADO';
+        }
+        if (closedCard) closedCard.classList.remove('hidden');
+      }
+    }
+
+    function toggleStoreStatus() {
+      isStoreOpen = !isStoreOpen;
+      updateStoreStatusUI();
+      var db = window.db;
+      var fc = window.firebaseCollections;
+      if (db && fc) {
+        fc.updateDoc(fc.doc(db, 'porkys_config', 'store_settings'), { isStoreOpen: isStoreOpen });
+      }
+    }
+
+    function updateExchangeRate(val) {
+      val = parseFloat(val);
+      if (isNaN(val) || val <= 0) return;
+      exchangeRate = val;
+      var db = window.db;
+      var fc = window.firebaseCollections;
+      if (db && fc) {
+        fc.updateDoc(fc.doc(db, 'porkys_config', 'store_settings'), { exchangeRate: exchangeRate });
+      }
+      showAlert("Tasa de cambio actualizada a " + exchangeRate + " Bs.", true);
+    }
+
+    function filterAdminInventoryCategory(cat) {
+      currentAdminInventoryCategoryFilter = cat;
+      renderAdminInventory();
+    }
+
+    function renderAdminInventory() {
+      var container = document.getElementById('admin-inventory-list');
+      if (!container) return;
+
+      var list = catalogProducts.filter(function(p) {
+        return p.category === currentAdminInventoryCategoryFilter;
+      });
+
+      var html = '';
+      for (var i = 0; i < list.length; i++) {
+        var p = list[i];
+        var isLowStock = p.stock <= (p.unit === 'Gr' ? 1000 : 5);
+        html += '<div style="background:' + (isLowStock ? '#fff3cd' : '#f8f9fa') + '; border:1px solid #e2e8f0; border-radius:8px; padding:8px; margin-bottom:6px;">' +
+                  '<div style="display:flex; justify-content:space-between; align-items:center; font-size:0.85rem;">' +
+                    '<div>' +
+                      '<strong>' + p.name + '</strong>' + (isLowStock ? ' <span style="color:#d35400; font-weight:bold;">⚠️ POCO STOCK</span>' : '') + '<br>' +
+                      '<small style="color:var(--text-muted);">Unidad: ' + p.unit + '</small>' +
+                    '</div>' +
+                    '<div style="display:flex; align-items:center; gap:6px;">' +
+                      '<span>Stock ' + p.unit + ':</span>' +
+                      '<input type="number" step="any" value="' + p.stock + '" style="width:70px; padding:4px; text-align:center; border:1px solid #ccc; border-radius:6px;" onchange="saveStockChange(\'' + p.id + '\', this.value)">' +
+                    '</div>' +
+                  '</div>' +
+                '</div>';
+      }
+
+      if (!html) {
+        html = '<p style="font-size:0.82rem; color:var(--text-muted); text-align:center; padding:10px;">No hay productos en esta categoría.</p>';
+      }
+      container.innerHTML = html;
+    }
+
+    function saveStockChange(prodId, newStock) {
+      newStock = parseFloat(newStock);
+      if (isNaN(newStock) || newStock < 0) return;
+
+      var db = window.db;
+      var fc = window.firebaseCollections;
+      if (db && fc) {
+        fc.updateDoc(fc.doc(db, 'porkys_products', String(prodId)), { stock: newStock });
+        showAlert("Stock actualizado correctamente.", true);
+      }
+    }
+
+    function filterAdminCategory(cat) {
+      currentAdminCategoryFilter = cat;
+      renderAdminPrices();
+    }
+
+    function renderAdminPrices() {
+      var container = document.getElementById('admin-price-list');
+      if (!container) return;
+
+      var list = catalogProducts.filter(function(p) {
+        return p.category === currentAdminCategoryFilter;
+      });
+
+      var html = '';
+      for (var i = 0; i < list.length; i++) {
+        var p = list[i];
+        html += '<div class="price-edit-row">' +
+                  '<div>' +
+                    '<strong>' + p.name + '</strong><br>' +
+                    '<small style="color:var(--text-muted);">' + p.unit + '</small>' +
+                  '</div>' +
+                  '<div style="display:flex; align-items:center; gap:6px;">' +
+                    '<span>$</span>' +
+                    '<input type="number" step="0.01" value="' + p.price.toFixed(2) + '" onchange="savePriceChange(\'' + p.id + '\', this.value)">' +
+                    '<button type="button" class="btn btn-sm btn-danger" style="padding:4px 8px;" onclick="deleteProduct(\'' + p.id + '\')">🗑️</button>' +
+                  '</div>' +
+                '</div>';
+      }
+
+      if (!html) {
+        html = '<p style="font-size:0.82rem; color:var(--text-muted); text-align:center; padding:10px;">No hay productos en esta categoría.</p>';
+      }
+      container.innerHTML = html;
+    }
+        function savePriceChange(prodId, newPrice) {
+      newPrice = parseFloat(newPrice);
+      if (isNaN(newPrice) || newPrice <= 0) return;
+
+      var db = window.db;
+      var fc = window.firebaseCollections;
+      if (db && fc) {
+        fc.updateDoc(fc.doc(db, 'porkys_products', String(prodId)), { price: newPrice });
+        showAlert("Precio actualizado correctamente.", true);
+      }
+    }
+
+    function deleteProduct(prodId) {
+      if (!confirm("¿Estás seguro de eliminar este producto del catálogo?")) return;
+
+      var db = window.db;
+      var fc = window.firebaseCollections;
+      if (db && fc) {
+        fc.deleteDoc(fc.doc(db, 'porkys_products', String(prodId)));
+        showAlert("Producto eliminado.", true);
+      }
+    }
+
+    function handleAddProduct(e) {
+      e.preventDefault();
+      var name = document.getElementById('new-prod-name').value.trim().toUpperCase();
+      var cat = document.getElementById('new-prod-cat').value;
+      var unit = document.getElementById('new-prod-unit').value;
+      var price = parseFloat(document.getElementById('new-prod-price').value);
+      var stock = parseFloat(document.getElementById('new-prod-stock').value);
+
+      if (!name || isNaN(price) || isNaN(stock)) {
+        showAlert("Por favor completa los campos correctamente.", false);
+        return;
+      }
+
+      var newId = Date.now();
+      var newProd = {
+        id: newId,
+        name: name,
+        category: cat,
+        unit: unit,
+        price: price,
+        stock: stock,
+        available: true
+      };
+
+      var db = window.db;
+      var fc = window.firebaseCollections;
+      if (db && fc) {
+        fc.setDoc(fc.doc(db, 'porkys_products', String(newId)), newProd);
+      }
+
+      document.getElementById('form-add-product').reset();
+      showAlert("¡Producto agregado exitosamente!", true);
+      renderAdminInventory();
+      renderAdminPrices();
+    }
+
+    function handleChangeAdminPass(e) {
+      e.preventDefault();
+      var newPass = document.getElementById('new-admin-pass').value;
+      if (!newPass) return;
+
+      currentAdminPass = newPass;
+      var db = window.db;
+      var fc = window.firebaseCollections;
+      if (db && fc) {
+        fc.updateDoc(fc.doc(db, 'porkys_config', 'store_settings'), { adminPass: currentAdminPass });
+      }
+
+      document.getElementById('new-admin-pass').value = '';
+      showAlert("Clave de administrador actualizada con éxito.", true);
+    }
+
+    function renderAdminOrders() {
+      var container = document.getElementById('admin-orders-list');
+      if (!container) return;
+
+      if (allOrdersList.length === 0) {
+        container.innerHTML = '<p class="empty-orders">No hay pedidos registrados en el sistema.</p>';
+        return;
+      }
+
+      var html = '';
+      for (var i = 0; i < allOrdersList.length; i++) {
+        var order = allOrdersList[i];
+        var client = order.client || {};
+
+        var itemsSummary = '';
+        if (order.items && order.items.length > 0) {
+          for (var j = 0; j < order.items.length; j++) {
+            var it = order.items[j];
+            itemsSummary += '• ' + it.name + ' (' + it.qty + ' ' + (it.unit === 'Gr' ? 'g' : 'unid') + ') - $' + (it.price * (it.unit === 'Gr' ? it.qty/1000 : it.qty)).toFixed(2) + '<br>';
+          }
+        }
+
+        html += '<div class="order-card-admin">' +
+                  '<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">' +
+                    '<strong>Pedido #' + order.id + '</strong>' +
+                    '<span class="status-badge waiting">' + order.status + '</span>' +
+                  '</div>' +
+                  '<div><strong>Cliente:</strong> ' + (client.nombre || 'N/A') + ' (' + (client.cedula || 'N/A') + ')</div>' +
+                  '<div><strong>Teléfono:</strong> ' + (client.telefono || 'N/A') + '</div>' +
+                  '<div><strong>Dirección:</strong> ' + (client.direccion || 'N/A') + '</div>' +
+                  '<hr style="margin:6px 0; border:0; border-top:1px solid #ddd;">' +
+                  '<div><strong>Productos:</strong><br>' + itemsSummary + '</div>' +
+                  '<div><strong>Delivery:</strong> $1.00 (876,80 Bs.)</div>' +
+                  '<div style="font-weight:bold; color:var(--pink-accent); margin-top:4px;">Total: $' + order.totalUSD.toFixed(2) + ' (' + order.totalBs.toLocaleString('es-VE', {minimumFractionDigits:2}) + ' Bs.)</div>' +
+                  '<hr style="margin:6px 0; border:0; border-top:1px solid #ddd;">' +
+                  '<div><strong>Pago:</strong> ' + order.bankSource + ' ➔ ' + order.bankDest + '</div>' +
+                  '<div><strong>Ref:</strong> ' + order.ref + ' | <strong>Monto Abonado:</strong> ' + order.amountBs + ' Bs.</div>' +
+                  '<div style="display:flex; gap:6px; margin-top:8px;">' +
+                    '<button type="button" class="btn btn-sm btn-info" onclick="viewProof(\'' + order.id + '\')">🖼️ Ver Capture</button>' +
+                    '<select onchange="changeOrderStatus(\'' + order.id + '\', this.value)" style="padding:2px 4px; font-size:0.8rem; border-radius:6px;">' +
+                      '<option value="ESPERANDO CONFIRMACION"' + (order.status === 'ESPERANDO CONFIRMACION' ? ' selected' : '') + '>ESPERANDO CONFIRMACION</option>' +
+                      '<option value="EN PROCESO"' + (order.status === 'EN PROCESO' ? ' selected' : '') + '>EN PROCESO</option>' +
+                      '<option value="EMPAQUETADO"' + (order.status === 'EMPAQUETADO' ? ' selected' : '') + '>EMPAQUETADO</option>' +
+                      '<option value="EN CAMINO"' + (order.status === 'EN CAMINO' ? ' selected' : '') + '>EN CAMINO</option>' +
+                      '<option value="ENTREGADO"' + (order.status === 'ENTREGADO' ? ' selected' : '') + '>ENTREGADO</option>' +
+                    '</select>' +
+                  '</div>' +
+                '</div>';
+      }
+      container.innerHTML = html;
+    }
+        function changeOrderStatus(orderId, newStatus) {
+      var db = window.db;
+      var fc = window.firebaseCollections;
+      if (db && fc) {
+        fc.updateDoc(fc.doc(db, 'porkys_orders', String(orderId)), { status: newStatus });
+        showAlert("Estado del pedido #" + orderId + " cambiado a: " + newStatus, true);
+      }
+    }
+
+    function viewProof(orderId) {
+      var order = null;
+      for (var i = 0; i < allOrdersList.length; i++) {
+        if (String(allOrdersList[i].id) === String(orderId)) {
+          order = allOrdersList[i];
+          break;
+        }
+      }
+
+      if (order && order.proof) {
+        document.getElementById('proof-img').src = order.proof;
+        document.getElementById('proof-modal').classList.remove('hidden');
+      } else {
+        showAlert("No hay imagen de comprobante para este pedido.", false);
+      }
+    }
+
+    function closeProofModal() {
+      document.getElementById('proof-modal').classList.add('hidden');
+    }
+
+    function handleShiftClose() {
+      var totalUSD = 0;
+      var totalBs = 0;
+      var completedOrders = 0;
+
+      for (var i = 0; i < allOrdersList.length; i++) {
+        var o = allOrdersList[i];
+        if (o.status === 'ENTREGADO' || o.status === 'EN CAMINO' || o.status === 'EMPAQUETADO' || o.status === 'EN PROCESO') {
+          totalUSD += o.totalUSD;
+          totalBs += o.totalBs;
+          completedOrders++;
+        }
+      }
+
+      var detailsHtml = '<p><strong>Total Pedidos Procesados:</strong> ' + completedOrders + '</p>' +
+                        '<p><strong>Ventas Totales ($):</strong> $' + totalUSD.toFixed(2) + '</p>' +
+                        '<p><strong>Ventas Totales (Bs.):</strong> ' + totalBs.toLocaleString('es-VE', {minimumFractionDigits: 2}) + ' Bs.</p>' +
+                        '<p style="font-size:0.78rem; color:var(--text-muted); margin-top:8px;">Al reiniciar el cuadre, los pedidos de la jornada actual pasarán al archivo del día.</p>';
+
+      document.getElementById('shift-details').innerHTML = detailsHtml;
+      document.getElementById('shift-modal').classList.remove('hidden');
+    }
+
+    function closeShiftModal() {
+      document.getElementById('shift-modal').classList.add('hidden');
+    }
+
+    function confirmResetShift() {
+      if (!confirm("¿Deseas reiniciar la jornada de ventas? Se archivarán las órdenes procesadas.")) return;
+
+      var db = window.db;
+      var fc = window.firebaseCollections;
+      if (db && fc) {
+        for (var i = 0; i < allOrdersList.length; i++) {
+          fc.deleteDoc(fc.doc(db, 'porkys_orders', String(allOrdersList[i].id)));
+        }
+      }
+
+      closeShiftModal();
+      showAlert("Jornada reiniciada exitosamente.", true);
+    }
+  </script>
+</body>
+</html>
