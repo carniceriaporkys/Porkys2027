@@ -40,176 +40,37 @@
       --radius: 14px;
     }
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: 'Segoe UI', system-ui, sans-serif;
-    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, sans-serif; }
+    body { background-color: var(--bg-light); color: var(--text-dark); padding-bottom: 40px; }
 
-    body {
-      background-color: var(--bg-light);
-      color: var(--text-dark);
-      padding-bottom: 40px;
-    }
+    .app-header { background: linear-gradient(135deg, var(--pink-accent), var(--pink-main)); color: white; padding: 15px 16px; box-shadow: 0 4px 15px rgba(255, 71, 87, 0.3); text-align: center; }
+    .header-branding { display: flex; align-items: center; justify-content: center; gap: 12px; max-width: 500px; margin: 0 auto; }
+    .brand-line { flex: 1; height: 2px; background: rgba(255, 255, 255, 0.6); border-radius: 2px; }
+    .pig-badge-icon { background: white; width: 52px; height: 52px; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 3px 8px rgba(0,0,0,0.15); border: 2px solid #ffeaa7; flex-shrink: 0; }
+    .pig-svg-draw { width: 34px; height: 34px; }
+    .app-header h1 { font-size: 1.4rem; font-weight: 800; line-height: 1.2; letter-spacing: 0.5px; margin-top: 4px; }
+    .app-header p { font-size: 0.8rem; opacity: 0.95; }
 
-    .app-header {
-      background: linear-gradient(135deg, var(--pink-accent), var(--pink-main));
-      color: white;
-      padding: 15px 16px;
-      box-shadow: 0 4px 15px rgba(255, 71, 87, 0.3);
-      text-align: center;
-    }
+    .container { max-width: 600px; margin: 15px auto; padding: 0 12px; }
+    .screen { background: var(--card-bg); padding: 16px; border-radius: var(--radius); box-shadow: 0 8px 20px rgba(0,0,0,0.06); margin-bottom: 15px; }
+    .hidden { display: none !important; }
 
-    .header-branding {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 12px;
-      max-width: 500px;
-      margin: 0 auto;
-    }
+    .hero-card { text-align: center; margin-bottom: 15px; }
+    h2 { color: var(--pink-accent); font-size: 1.2rem; margin-bottom: 8px; }
+    .subtitle { color: var(--text-muted); font-size: 0.85rem; }
 
-    .brand-line {
-      flex: 1;
-      height: 2px;
-      background: rgba(255, 255, 255, 0.6);
-      border-radius: 2px;
-    }
+    .form-group { margin-bottom: 12px; }
+    .form-group label { display: block; font-size: 0.82rem; font-weight: 600; margin-bottom: 4px; }
+    .form-group input, .form-group textarea, .form-group select { width: 100%; padding: 8px 10px; border: 2px solid #eccc68; border-radius: 8px; font-size: 0.9rem; outline: none; background: white; }
+    .cedula-input-group { display: flex; gap: 6px; }
+    .cedula-input-group select { width: 70px; font-weight: bold; }
+    .uppercase-input { text-transform: uppercase; }
 
-    .pig-badge-icon {
-      background: white;
-      width: 52px;
-      height: 52px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 3px 8px rgba(0,0,0,0.15);
-      border: 2px solid #ffeaa7;
-      flex-shrink: 0;
-    }
+    .search-box { position: relative; margin-bottom: 12px; }
+    .search-box input { width: 100%; padding: 10px 12px 10px 38px; border: 2px solid var(--pink-accent); border-radius: 10px; font-size: 0.92rem; outline: none; }
+    .search-box .search-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); font-size: 1rem; color: var(--text-muted); }
 
-    .pig-svg-draw {
-      width: 34px;
-      height: 34px;
-    }
-
-    .app-header h1 {
-      font-size: 1.4rem;
-      font-weight: 800;
-      line-height: 1.2;
-      letter-spacing: 0.5px;
-      margin-top: 4px;
-    }
-
-    .app-header p {
-      font-size: 0.8rem;
-      opacity: 0.95;
-    }
-
-    .container {
-      max-width: 600px;
-      margin: 15px auto;
-      padding: 0 12px;
-    }
-
-    .screen {
-      background: var(--card-bg);
-      padding: 16px;
-      border-radius: var(--radius);
-      box-shadow: 0 8px 20px rgba(0,0,0,0.06);
-      margin-bottom: 15px;
-    }
-
-    .hidden {
-      display: none !important;
-    }
-
-    .hero-card {
-      text-align: center;
-      margin-bottom: 15px;
-    }
-
-    h2 {
-      color: var(--pink-accent);
-      font-size: 1.2rem;
-      margin-bottom: 8px;
-    }
-
-    .subtitle {
-      color: var(--text-muted);
-      font-size: 0.85rem;
-    }
-
-    .form-group {
-      margin-bottom: 12px;
-    }
-
-    .form-group label {
-      display: block;
-      font-size: 0.82rem;
-      font-weight: 600;
-      margin-bottom: 4px;
-    }
-
-    .form-group input, .form-group textarea, .form-group select {
-      width: 100%;
-      padding: 8px 10px;
-      border: 2px solid #eccc68;
-      border-radius: 8px;
-      font-size: 0.9rem;
-      outline: none;
-      background: white;
-    }
-
-    .cedula-input-group {
-      display: flex;
-      gap: 6px;
-    }
-
-    .cedula-input-group select {
-      width: 70px;
-      font-weight: bold;
-    }
-
-    .uppercase-input {
-      text-transform: uppercase;
-    }
-
-    .search-box {
-      position: relative;
-      margin-bottom: 12px;
-    }
-
-    .search-box input {
-      width: 100%;
-      padding: 10px 12px 10px 38px;
-      border: 2px solid var(--pink-accent);
-      border-radius: 10px;
-      font-size: 0.92rem;
-      outline: none;
-    }
-
-    .search-box .search-icon {
-      position: absolute;
-      left: 12px;
-      top: 50%;
-      transform: translateY(-50%);
-      font-size: 1rem;
-      color: var(--text-muted);
-    }
-        .btn {
-      width: 100%;
-      padding: 10px;
-      border: none;
-      border-radius: 8px;
-      font-size: 0.9rem;
-      font-weight: 700;
-      cursor: pointer;
-      margin-top: 6px;
-    }
-
+    .btn { width: 100%; padding: 10px; border: none; border-radius: 8px; font-size: 0.9rem; font-weight: 700; cursor: pointer; margin-top: 6px; }
     .btn-primary { background-color: var(--pink-accent); color: white; }
     .btn-secondary { background-color: var(--bg-dark); color: white; }
     .btn-success { background-color: var(--green-success); color: white; }
@@ -299,8 +160,7 @@
     <h1>Porkys C.A</h1>
     <p>Pedidos a Casa</p>
   </header>
-
-  <main class="container">
+    <main class="container">
     <div id="alert-box" class="alert-box hidden"></div>
 
     <section id="screen-home" class="screen">
@@ -313,7 +173,8 @@
         <button onclick="showScreen('screen-login-admin')" class="btn btn-secondary">⚙️ Soy Comercio (Admin)</button>
       </div>
     </section>
-        <section id="screen-login-client" class="screen hidden">
+
+    <section id="screen-login-client" class="screen hidden">
       <h2>Iniciar Sesión - Cliente</h2>
       <form onsubmit="handleLoginClient(event)">
         <div class="form-group">
@@ -426,7 +287,8 @@
       </form>
       <button onclick="showScreen('screen-login-client')" class="btn btn-back">Volver al Login</button>
     </section>
-        <section id="screen-login-admin" class="screen hidden">
+
+    <section id="screen-login-admin" class="screen hidden">
       <h2>Acceso Administrador</h2>
       <form onsubmit="handleLoginAdmin(event)">
         <div class="form-group">
@@ -538,7 +400,7 @@
         </div>
       </div>
     </section>
-        <section id="screen-admin-panel" class="screen hidden">
+      <section id="screen-admin-panel" class="screen hidden">
       <div class="admin-top-bar">
         <h2>Panel de Administración</h2>
         <button onclick="showScreen('screen-home')" class="btn btn-sm btn-back">Cerrar Sesión</button>
@@ -658,7 +520,8 @@
       </div>
     </section>
   </main>
-    <div id="proof-modal" class="modal-overlay hidden">
+
+  <div id="proof-modal" class="modal-overlay hidden">
     <div class="modal-content">
       <h3>Comprobante de Pago</h3>
       <div id="proof-image-container" style="text-align: center; margin: 10px 0;">
@@ -681,99 +544,92 @@
 
   <script>
     var defaultProducts = [
-      { id: 101, name: 'MUSLO DE POLLO', price: 4.50, unit: 'Gr', category: 'carnes', stock: 30, available: true },
-      { id: 102, name: 'PECHUGA DE POLLO', price: 6.00, unit: 'Gr', category: 'carnes', stock: 30, available: true },
-      { id: 103, name: 'ALAS DE POLLO', price: 4.80, unit: 'Gr', category: 'carnes', stock: 25, available: true },
+      { id: 101, name: 'CARNE MOLIDA (1ERA)', price: 1.00, unit: 'Gr', category: 'carnes', stock: 30, available: true },
+      { id: 102, name: 'CARNE PARA GUISAR (1ERA)', price: 1.00, unit: 'Gr', category: 'carnes', stock: 25, available: true },
+      { id: 103, name: 'CARNE PARA MECHAR (1ERA)', price: 1.00, unit: 'Gr', category: 'carnes', stock: 25, available: true },
+      { id: 104, name: 'COSTILLA DE RES', price: 1.00, unit: 'Gr', category: 'carnes', stock: 20, available: true },
+      { id: 105, name: 'LAGARTO DE RES', price: 1.00, unit: 'Gr', category: 'carnes', stock: 15, available: true },
+      { id: 106, name: 'HUESO ROJO', price: 1.00, unit: 'Gr', category: 'carnes', stock: 40, available: true },
+      { id: 107, name: 'SOLOMO DE CUADRIL', price: 1.00, unit: 'Gr', category: 'carnes', stock: 15, available: true },
+      { id: 108, name: 'LOMITO DE RES', price: 1.00, unit: 'Gr', category: 'carnes', stock: 10, available: true },
+      { id: 109, name: 'PUNTA TRASERA', price: 1.00, unit: 'Gr', category: 'carnes', stock: 12, available: true },
+      { id: 110, name: 'CARNE MOLIDA (2DA)', price: 1.00, unit: 'Gr', category: 'carnes', stock: 30, available: true },
+      { id: 111, name: 'CARNE PARA GUISAR (2DA)', price: 1.00, unit: 'Gr', category: 'carnes', stock: 30, available: true },
+      { id: 112, name: 'CARNE PARA MECHAR (2DA)', price: 1.00, unit: 'Gr', category: 'carnes', stock: 25, available: true },
+      { id: 113, name: 'MONDANGO', price: 1.00, unit: 'Gr', category: 'carnes', stock: 15, available: true },
+      { id: 114, name: 'HÍGADO DE RES', price: 1.00, unit: 'Gr', category: 'carnes', stock: 20, available: true },
+      { id: 115, name: 'PASTA DE CHORIZO', price: 1.00, unit: 'Gr', category: 'carnes', stock: 25, available: true },
+      { id: 116, name: 'PATAS DE RES', price: 1.00, unit: 'Unid', category: 'carnes', stock: 0, available: true },
+      { id: 117, name: 'CORAZÓN DE RES', price: 1.00, unit: 'Unid', category: 'carnes', stock: 0, available: true },
+      { id: 118, name: 'LENGUA DE RES', price: 1.00, unit: 'Unid', category: 'carnes', stock: 0, available: true },
+      { id: 119, name: 'COSTILLA DE COCHINO', price: 1.00, unit: 'Gr', category: 'carnes', stock: 25, available: true },
+      { id: 120, name: 'CHULETA DE COCHINO', price: 1.00, unit: 'Gr', category: 'carnes', stock: 25, available: true },
+      { id: 121, name: 'POLLO ENTERO', price: 1.00, unit: 'Gr', category: 'carnes', stock: 40, available: true },
+      { id: 122, name: 'POLLO PICADO', price: 1.00, unit: 'Gr', category: 'carnes', stock: 35, available: true },
+      { id: 123, name: 'MUSLO DE POLLO', price: 1.00, unit: 'Gr', category: 'carnes', stock: 5, available: true },
+      { id: 124, name: 'PECHUGA DE POLLO', price: 1.00, unit: 'Gr', category: 'carnes', stock: 5, available: true },
+      { id: 125, name: 'ALAS DE POLLO', price: 1.00, unit: 'Gr', category: 'carnes', stock: 2, available: true },
 
-      { id: 201, name: 'QUESO BLANCO DURO', price: 6.00, unit: 'Gr', category: 'charcuteria', stock: 30, available: true },
-      { id: 202, name: 'QUESO PAISA', price: 7.50, unit: 'Gr', category: 'charcuteria', stock: 20, available: true },
-      { id: 203, name: 'JAMÓN DE PIERNA', price: 8.00, unit: 'Gr', category: 'charcuteria', stock: 25, available: true },
-      { id: 204, name: 'MORTADELA PEQUEÑA (PIEZA 400G)', price: 2.00, unit: 'Unid', category: 'charcuteria', stock: 15, available: true },
-      { id: 205, name: 'MORTADELA GRANDE (PIEZA 900G)', price: 4.50, unit: 'Unid', category: 'charcuteria', stock: 10, available: true },
+      { id: 201, name: 'QUESO BLANCO DURO', price: 1.00, unit: 'Gr', category: 'charcuteria', stock: 30, available: true },
+      { id: 202, name: 'QUESO PAISA', price: 1.00, unit: 'Gr', category: 'charcuteria', stock: 20, available: true },
+      { id: 203, name: 'JAMÓN DE PIERNA', price: 1.00, unit: 'Gr', category: 'charcuteria', stock: 25, available: true },
+      { id: 204, name: 'MORTADELA PEQUEÑA (PIEZA 400G)', price: 1.00, unit: 'Unid', category: 'charcuteria', stock: 15, available: true },
+      { id: 205, name: 'MORTADELA GRANDE (PIEZA 900G)', price: 1.00, unit: 'Unid', category: 'charcuteria', stock: 10, available: true },
 
-      { id: 301, name: 'HARINA PAN (1 KG)', price: 1.10, unit: 'Unid', category: 'viveres', stock: 50, available: true },
-      { id: 302, name: 'PASTA PRIMOR (1 KG)', price: 1.30, unit: 'Unid', category: 'viveres', stock: 40, available: true },
-      { id: 303, name: 'ACEITE VEGETAL (1 LTR)', price: 2.50, unit: 'Unid', category: 'viveres', stock: 30, available: true },
-      { id: 304, name: 'MAYONESA KRAFT (445G)', price: 3.20, unit: 'Unid', category: 'viveres', stock: 25, available: true },
-      { id: 305, name: 'CASABE', price: 2.40, unit: 'Unid', category: 'viveres', stock: 59, available: true },
-      { id: 306, name: 'ARROZ MARY DORADO', price: 1.69, unit: 'Unid', category: 'viveres', stock: 9, available: true },
-      { id: 307, name: 'PRIMOR CREMA DE ARROZ', price: 1.56, unit: 'Unid', category: 'viveres', stock: 11, available: true },
-      { id: 308, name: 'LECHE AMANECER', price: 17.87, unit: 'Unid', category: 'viveres', stock: 6, available: true },
-      { id: 309, name: 'LECHE AMANECER PEQUEÑA', price: 7.29, unit: 'Unid', category: 'viveres', stock: 5, available: true },
-      { id: 310, name: 'AVENA EN HOJUELAS', price: 1.95, unit: 'Unid', category: 'viveres', stock: 1, available: true },
-      { id: 311, name: 'HARINA DE AVENA', price: 1.56, unit: 'Unid', category: 'viveres', stock: 4, available: true },
-      { id: 312, name: 'CAFE DELLA NONNA MEDIO KILO', price: 8.45, unit: 'Unid', category: 'viveres', stock: 1, available: true },
-      { id: 313, name: 'CAFE DELLA NONNA DOSCIENTOS GRAMOS', price: 3.24, unit: 'Unid', category: 'viveres', stock: 35, available: true },
-      { id: 314, name: 'CAFE AMANECER DOSCIENTOS GRAMOS', price: 3.24, unit: 'Unid', category: 'viveres', stock: 8, available: true },
-      { id: 315, name: 'CAFE AMANECER MEDIO KILO', price: 7.80, unit: 'Unid', category: 'viveres', stock: 4, available: true },
-      { id: 316, name: 'TODDY CUATROCIENTOS GRAMOS', price: 6.47, unit: 'Unid', category: 'viveres', stock: 7, available: true },
-      { id: 317, name: 'TODDY DOSCIENTOS', price: 3.77, unit: 'Unid', category: 'viveres', stock: 2, available: true },
-      { id: 318, name: 'AZUCARADAS', price: 4.09, unit: 'Unid', category: 'viveres', stock: 3, available: true },
-      { id: 319, name: 'ARROZ MARY TRADICIONAL', price: 1.39, unit: 'Unid', category: 'viveres', stock: 5, available: true },
-      { id: 320, name: 'ARROZ AMANECER', price: 1.21, unit: 'Unid', category: 'viveres', stock: 25, available: true },
-      { id: 321, name: 'ARROZ PRIMOR TRADICIONAL', price: 1.95, unit: 'Unid', category: 'viveres', stock: 14, available: true },
-      { id: 322, name: 'ARROZ PRIMOR SUPERIOR', price: 1.95, unit: 'Unid', category: 'viveres', stock: 21, available: true },
-      { id: 323, name: 'AZUCAR AURORA', price: 1.95, unit: 'Unid', category: 'viveres', stock: 35, available: true },
-      { id: 324, name: 'AZUCAR AMANECER', price: 1.92, unit: 'Unid', category: 'viveres', stock: 46, available: true },
-      { id: 325, name: 'HARINA PAN DE ARROZ', price: 1.60, unit: 'Unid', category: 'viveres', stock: 12, available: true },
-      { id: 326, name: 'HARINA DE TRIGO MARY LEUDANTE', price: 1.16, unit: 'Unid', category: 'viveres', stock: 7, available: true },
-      { id: 327, name: 'HARINA DE TRIGO MARY TODO USO', price: 1.11, unit: 'Unid', category: 'viveres', stock: 4, available: true },
-      { id: 328, name: 'ARROZ MARY ESMERALDA', price: 1.91, unit: 'Unid', category: 'viveres', stock: 74, available: true },
-      { id: 329, name: 'MAVESA MAYONESA', price: 4.55, unit: 'Unid', category: 'viveres', stock: 9, available: true },
-      { id: 330, name: 'RIKESA', price: 7.57, unit: 'Unid', category: 'viveres', stock: 5, available: true },
-      { id: 331, name: 'PAMPERO KETCHUP', price: 2.60, unit: 'Unid', category: 'viveres', stock: 14, available: true },
-      { id: 332, name: 'MAZEITE UN LITRO', price: 6.24, unit: 'Unid', category: 'viveres', stock: 1, available: true },
-      { id: 333, name: 'AURORA ACEITE', price: 4.55, unit: 'Unid', category: 'viveres', stock: 10, available: true },
-      { id: 334, name: 'MOSTAZA FRITZ CIENTO SESENTA GRAMOS', price: 1.40, unit: 'Unid', category: 'viveres', stock: 9, available: true },
-      { id: 335, name: 'MOSTAZA IBERIA DOSCIENTO CIENCUENTA GRAMOS', price: 3.29, unit: 'Unid', category: 'viveres', stock: 3, available: true },
-      { id: 336, name: 'MAVESA MARGARINA MEDIO KILO', price: 3.50, unit: 'Unid', category: 'viveres', stock: 7, available: true },
-      { id: 337, name: 'MAVESA MARGARINA UN KILO', price: 6.57, unit: 'Unid', category: 'viveres', stock: 5, available: true },
-      { id: 338, name: 'SAL MERU', price: 0.79, unit: 'Unid', category: 'viveres', stock: 60, available: true },
-      { id: 339, name: 'IBERIA SALSA BOLOGÑESA CIENTO NOVENT GR', price: 3.02, unit: 'Unid', category: 'viveres', stock: 11, available: true },
-      { id: 340, name: 'IBERIA SALSA COMPLETA CIENTO NOVENTA GR', price: 3.14, unit: 'Unid', category: 'viveres', stock: 19, available: true },
-      { id: 341, name: 'IBERIA SALSA DE TOMATE MIX CIENTO NIVENTA GR', price: 3.02, unit: 'Unid', category: 'viveres', stock: 8, available: true },
-      { id: 342, name: 'ACEITUNAS VERDES ENTERAS', price: 2.26, unit: 'Unid', category: 'viveres', stock: 11, available: true },
-      { id: 343, name: 'PICANTE PIRI PIRI', price: 2.68, unit: 'Unid', category: 'viveres', stock: 9, available: true },
-      { id: 344, name: 'SALSA DE AJO', price: 1.56, unit: 'Unid', category: 'viveres', stock: 16, available: true },
-      { id: 345, name: 'SALSA DE SOYA', price: 2.17, unit: 'Unid', category: 'viveres', stock: 27, available: true },
-      { id: 346, name: 'SALSA INGLESA', price: 2.17, unit: 'Unid', category: 'viveres', stock: 20, available: true },
-      { id: 347, name: 'VINAGRE DE MANZANA MEDIO LT', price: 1.95, unit: 'Unid', category: 'viveres', stock: 19, available: true },
-      { id: 348, name: 'MAVESA VINAGRE UN LITRO', price: 2.70, unit: 'Unid', category: 'viveres', stock: 20, available: true },
-      { id: 349, name: 'VINAGRE MEDIO LITRO', price: 1.61, unit: 'Unid', category: 'viveres', stock: 24, available: true },
-      { id: 350, name: 'CARBON PEQUEÑO', price: 2.60, unit: 'Unid', category: 'viveres', stock: 17, available: true },
-      { id: 351, name: 'CARBON GRANDE', price: 7.80, unit: 'Unid', category: 'viveres', stock: 3, available: true },
-      { id: 352, name: 'DEDAL PRIMOR UN KILO', price: 1.30, unit: 'Unid', category: 'viveres', stock: 14, available: true },
-      { id: 353, name: 'ATUN MARGARITA CIENTO SETENTA GR', price: 1.80, unit: 'Unid', category: 'viveres', stock: 8, available: true },
-      { id: 354, name: 'PEPITONAS MARGARITA CIENTO CUARENTA GR', price: 1.60, unit: 'Unid', category: 'viveres', stock: 4, available: true },
-      { id: 355, name: 'SARDINA MARGARITA EN SALSA DE TOMATE', price: 1.20, unit: 'Unid', category: 'viveres', stock: 17, available: true },
-      { id: 356, name: 'HUEVOS', price: 0.20, unit: 'Unid', category: 'viveres', stock: 50, available: true },
-      { id: 357, name: 'REFRESCO COCA COLA DOS LT', price: 2.50, unit: 'Unid', category: 'viveres', stock: 60, available: true },
-      { id: 358, name: 'VERMICELLI DELLA NONNA UN KILO', price: 1.30, unit: 'Unid', category: 'viveres', stock: 45, available: true },
-      { id: 359, name: 'TORNILLO DELLA NONNA', price: 1.30, unit: 'Unid', category: 'viveres', stock: 21, available: true },
+      { id: 301, name: 'PASTA PRIMOR (1 KG)', price: 1.00, unit: 'Unid', category: 'viveres', stock: 40, available: true },
+      { id: 302, name: 'CASABE', price: 1.00, unit: 'Unid', category: 'viveres', stock: 59, available: true },
+      { id: 303, name: 'ARROZ MARY DORADO', price: 1.00, unit: 'Unid', category: 'viveres', stock: 9, available: true },
+      { id: 304, name: 'PRIMOR CREMA DE ARROZ', price: 1.00, unit: 'Unid', category: 'viveres', stock: 11, available: true },
+      { id: 305, name: 'LECHE AMANECER', price: 1.00, unit: 'Unid', category: 'viveres', stock: 6, available: true },
+      { id: 306, name: 'LECHE AMANECER PEQUEÑA', price: 1.00, unit: 'Unid', category: 'viveres', stock: 5, available: true },
+      { id: 307, name: 'AVENA EN HOJUELAS', price: 1.00, unit: 'Unid', category: 'viveres', stock: 1, available: true },
+      { id: 308, name: 'HARINA DE AVENA', price: 1.00, unit: 'Unid', category: 'viveres', stock: 4, available: true },
+      { id: 309, name: 'CAFE DELLA NONNA MEDIO KILO', price: 1.00, unit: 'Unid', category: 'viveres', stock: 1, available: true },
+      { id: 310, name: 'CAFE DELLA NONNA DOSCIENTOS GRAMOS', price: 1.00, unit: 'Unid', category: 'viveres', stock: 35, available: true },
+      { id: 311, name: 'CAFE AMANECER DOSCIENTOS GRAMOS', price: 1.00, unit: 'Unid', category: 'viveres', stock: 8, available: true },
+      { id: 312, name: 'CAFE AMANECER MEDIO KILO', price: 1.00, unit: 'Unid', category: 'viveres', stock: 4, available: true },
+      { id: 313, name: 'TODDY CUATROCIENTOS GRAMOS', price: 1.00, unit: 'Unid', category: 'viveres', stock: 7, available: true },
+      { id: 314, name: 'TODDY DOSCIENTOS', price: 1.00, unit: 'Unid', category: 'viveres', stock: 2, available: true },
+      { id: 315, name: 'AZUCARADAS', price: 1.00, unit: 'Unid', category: 'viveres', stock: 3, available: true },
+      { id: 316, name: 'ARROZ MARY TRADICIONAL', price: 1.00, unit: 'Unid', category: 'viveres', stock: 5, available: true },
+      { id: 317, name: 'ARROZ AMANECER', price: 1.00, unit: 'Unid', category: 'viveres', stock: 25, available: true },
+      { id: 318, name: 'ARROZ PRIMOR TRADICIONAL', price: 1.00, unit: 'Unid', category: 'viveres', stock: 14, available: true },
+      { id: 319, name: 'ARROZ PRIMOR SUPERIOR', price: 1.00, unit: 'Unid', category: 'viveres', stock: 21, available: true },
+      { id: 320, name: 'AZUCAR AURORA', price: 1.00, unit: 'Unid', category: 'viveres', stock: 35, available: true },
+      { id: 321, name: 'AZUCAR AMANECER', price: 1.00, unit: 'Unid', category: 'viveres', stock: 46, available: true },
+      { id: 322, name: 'HARINA PAN DE ARROZ', price: 1.00, unit: 'Unid', category: 'viveres', stock: 12, available: true },
+      { id: 323, name: 'HARINA DE TRIGO MARY LEUDANTE', price: 1.00, unit: 'Unid', category: 'viveres', stock: 7, available: true },
+      { id: 324, name: 'HARINA DE TRIGO MARY TODO USO', price: 1.00, unit: 'Unid', category: 'viveres', stock: 4, available: true },
+      { id: 325, name: 'ARROZ MARY ESMERALDA', price: 1.00, unit: 'Unid', category: 'viveres', stock: 74, available: true },
+      { id: 326, name: 'MAVESA MAYONESA', price: 1.00, unit: 'Unid', category: 'viveres', stock: 9, available: true },
+      { id: 327, name: 'RIKESA', price: 1.00, unit: 'Unid', category: 'viveres', stock: 5, available: true },
+      { id: 328, name: 'PAMPERO KETCHUP', price: 1.00, unit: 'Unid', category: 'viveres', stock: 14, available: true },
+      { id: 329, name: 'MAZEITE UN LITRO', price: 1.00, unit: 'Unid', category: 'viveres', stock: 1, available: true },
+      { id: 330, name: 'AURORA ACEITE', price: 1.00, unit: 'Unid', category: 'viveres', stock: 10, available: true },
+      { id: 331, name: 'MOSTAZA FRITZ CIENTO SESENTA GRAMOS', price: 1.00, unit: 'Unid', category: 'viveres', stock: 9, available: true },
+      { id: 332, name: 'MOSTAZA IBERIA DOSCIENTO CIENCUENTA GRAMOS', price: 1.00, unit: 'Unid', category: 'viveres', stock: 3, available: true },
+      { id: 333, name: 'MAVESA MARGARINA MEDIO KILO', price: 1.00, unit: 'Unid', category: 'viveres', stock: 7, available: true },
+      { id: 334, name: 'MAVESA MARGARINA UN KILO', price: 1.00, unit: 'Unid', category: 'viveres', stock: 5, available: true },
+      { id: 335, name: 'SAL MERU', price: 1.00, unit: 'Unid', category: 'viveres', stock: 60, available: true },
+      { id: 336, name: 'IBERIA SALSA BOLOGÑESA CIENTO NOVENT GR', price: 1.00, unit: 'Unid', category: 'viveres', stock: 11, available: true },
+      { id: 337, name: 'IBERIA SALSA COMPLETA CIENTO NOVENTA GR', price: 1.00, unit: 'Unid', category: 'viveres', stock: 19, available: true },
+      { id: 338, name: 'IBERIA SALSA DE TOMATE MIX CIENTO NIVENTA GR', price: 1.00, unit: 'Unid', category: 'viveres', stock: 8, available: true },
+      { id: 339, name: 'ACEITUNAS VERDES ENTERAS', price: 1.00, unit: 'Unid', category: 'viveres', stock: 11, available: true },
+      { id: 340, name: 'PICANTE PIRI PIRI', price: 1.00, unit: 'Unid', category: 'viveres', stock: 9, available: true },
+      { id: 341, name: 'SALSA DE AJO', price: 1.00, unit: 'Unid', category: 'viveres', stock: 16, available: true },
+      { id: 342, name: 'SALSA DE SOYA', price: 1.00, unit: 'Unid', category: 'viveres', stock: 27, available: true },
+      { id: 343, name: 'SALSA INGLESA', price: 1.00, unit: 'Unid', category: 'viveres', stock: 20, available: true },
+      { id: 344, name: 'DEDAL PRIMOR UN KILO', price: 1.00, unit: 'Unid', category: 'viveres', stock: 14, available: true },
+      { id: 345, name: 'ATUN MARGARITA CIENTO SETENTA GR', price: 1.00, unit: 'Unid', category: 'viveres', stock: 8, available: true },
+      { id: 346, name: 'PEPITONAS MARGARITA CIENTO CUARENTA GR', price: 1.00, unit: 'Unid', category: 'viveres', stock: 4, available: true },
+      { id: 347, name: 'SARDINA MARGARITA EN SALSA DE TOMATE', price: 1.00, unit: 'Unid', category: 'viveres', stock: 17, available: true },
+      { id: 348, name: 'HUEVOS', price: 1.00, unit: 'Unid', category: 'viveres', stock: 50, available: true },
+      { id: 349, name: 'REFRESCO COCA COLA DOS LT', price: 1.00, unit: 'Unid', category: 'viveres', stock: 60, available: true },
 
-      { id: 401, name: 'DETERGENTE EN POLVO (1 KG)', price: 2.20, unit: 'Unid', category: 'limpieza', stock: 30, available: true },
-      { id: 402, name: 'JABÓN LÍQUIDO MULTIUSO (1 LTR)', price: 1.80, unit: 'Unid', category: 'limpieza', stock: 25, available: true },
-      { id: 403, name: 'CLORO CONCENTRADO (1 LTR)', price: 1.00, unit: 'Unid', category: 'limpieza', stock: 40, available: true },
-      { id: 404, name: 'LAVAPLATOS LÍQUIDO', price: 1.50, unit: 'Unid', category: 'limpieza', stock: 35, available: true },
-      { id: 405, name: 'DESINFECTANTE AROMA LAVANDA', price: 1.20, unit: 'Unid', category: 'limpieza', stock: 30, available: true },
-      { id: 406, name: 'LAVAPLATOS LIQUIDO BUENISIMO', price: 1.50, unit: 'Unid', category: 'limpieza', stock: 7, available: true },
-      { id: 407, name: 'DESINFECTANTE BUENISMO CHERRY', price: 1.20, unit: 'Unid', category: 'limpieza', stock: 1, available: true },
-      { id: 408, name: 'DESINFECTE BUENISIMO LAVANDA', price: 1.20, unit: 'Unid', category: 'limpieza', stock: 2, available: true },
-      { id: 409, name: 'JABON EN POLVO ACE', price: 2.20, unit: 'Unid', category: 'limpieza', stock: 5, available: true },
-      { id: 410, name: 'JABON EN POLVO LAS LLAVES BEBE', price: 2.50, unit: 'Unid', category: 'limpieza', stock: 3, available: true },
-      { id: 411, name: 'JABON EN POLVO LAS LLAVES LIMPIEZA ACTIVA', price: 2.50, unit: 'Unid', category: 'limpieza', stock: 8, available: true },
-      { id: 412, name: 'PAPEL ROSAL CUATRO ROLLOS', price: 2.00, unit: 'Unid', category: 'limpieza', stock: 26, available: true },
-      { id: 413, name: 'PAPEL HIEGIENICO GADUSOFTY', price: 1.80, unit: 'Unid', category: 'limpieza', stock: 10, available: true },
-      { id: 414, name: 'SERVILLETAS GADUSOFTY', price: 1.20, unit: 'Unid', category: 'limpieza', stock: 31, available: true },
+      { id: 401, name: 'PAPEL ROSAL CUATRO ROLLOS', price: 1.00, unit: 'Unid', category: 'limpieza', stock: 26, available: true },
+      { id: 402, name: 'SERVILLETAS GADUSOFTY', price: 1.00, unit: 'Unid', category: 'limpieza', stock: 31, available: true },
 
-      { id: 501, name: 'CHOCOLATE SAVOY (130G)', price: 2.00, unit: 'Unid', category: 'confiteria', stock: 30, available: true },
-      { id: 502, name: 'GALLETAS SUSY', price: 0.80, unit: 'Unid', category: 'confiteria', stock: 50, available: true },
-      { id: 503, name: 'GALLETA SODA EL SOL', price: 1.95, unit: 'Unid', category: 'confiteria', stock: 25, available: true },
-      { id: 504, name: 'GALLETA LIMON TV', price: 1.53, unit: 'Unid', category: 'confiteria', stock: 20, available: true },
-      { id: 505, name: 'GALLETA CHIPS AHOY', price: 5.00, unit: 'Unid', category: 'confiteria', stock: 15, available: true },
-      { id: 506, name: 'GALLETA CLUB SOCIAL', price: 2.40, unit: 'Unid', category: 'confiteria', stock: 30, available: true },
-      { id: 507, name: 'GALLETA MARIA', price: 2.60, unit: 'Unid', category: 'confiteria', stock: 25, available: true },
-      { id: 508, name: 'GALLETA MARIA CALEDONIA', price: 1.69, unit: 'Unid', category: 'confiteria', stock: 20, available: true }
+      { id: 501, name: 'CHOCOLATE SAVOY (130G)', price: 1.00, unit: 'Unid', category: 'confiteria', stock: 30, available: true }
     ];
         var catalogProducts = defaultProducts;
     var exchangeRate = 60.00;
@@ -927,7 +783,8 @@
         if (lbl2) lbl2.textContent = "2da Pregunta Registrada:";
       }
     }
-        function handleRecoverPass(e) {
+
+    function handleRecoverPass(e) {
       e.preventDefault();
       var nac = document.getElementById('rec-nac').value;
       var ced = document.getElementById('rec-cedula').value;
@@ -1036,9 +893,8 @@
       activeUser = null;
       currentCart = [];
       showScreen('screen-home');
-    }
-
-    function filterCategory(cat) {
+        }
+        function filterCategory(cat) {
       currentCategoryFilter = cat;
       var btns = ['carnes', 'charcuteria', 'viveres', 'limpieza', 'confiteria'];
       for (var i = 0; i < btns.length; i++) {
@@ -1054,8 +910,9 @@
     function handleSearchInput(val) {
       searchQuery = val.toLowerCase().trim();
       renderCatalog();
-      }
-        function renderCatalog() {
+    }
+
+    function renderCatalog() {
       var container = document.getElementById('product-list');
       if (!container) return;
       var html = '';
@@ -1178,7 +1035,6 @@
       var html = '';
       for (var i = 0; i < currentCart.length; i++) {
         var item = currentCart[i];
-        var itemTotal = item.price * (item.unit === 'Gr' ? item.qty / 1000 : item.qty);
         html += '<div class="cart-item-row">' +
                   '<div style="flex:1;">' +
                     '<strong>' + item.name + '</strong><br>' +
@@ -1194,7 +1050,8 @@
       container.innerHTML = html;
       updateCatalogTotals();
     }
-        function updateCatalogTotals() {
+
+    function updateCatalogTotals() {
       var subtotalUSD = 0;
       for (var i = 0; i < currentCart.length; i++) {
         var item = currentCart[i];
@@ -1328,11 +1185,10 @@
       txt.innerHTML = '<strong>Pedido #' + lastOrder.id + '</strong><br>' +
                       'Monto Total: $' + lastOrder.totalUSD.toFixed(2) + ' (' + lastOrder.totalBs.toLocaleString('es-VE', {minimumFractionDigits:2}) + ' Bs.)<br>' +
                       'Estado: <span class="status-badge ' + badgeClass + '">' + lastOrder.status + '</span>';
-    }
+        }
         function updateStoreStatusUI() {
       var btn = document.getElementById('toggle-store-btn');
       var closedCard = document.getElementById('store-closed-screen');
-      var catalogContent = document.getElementById('catalog-content-wrapper');
 
       if (isStoreOpen) {
         if (btn) {
@@ -1454,7 +1310,8 @@
       }
       container.innerHTML = html;
     }
-        function savePriceChange(prodId, newPrice) {
+
+    function savePriceChange(prodId, newPrice) {
       newPrice = parseFloat(newPrice);
       if (isNaN(newPrice) || newPrice <= 0) return;
 
@@ -1580,7 +1437,8 @@
       }
       container.innerHTML = html;
     }
-        function changeOrderStatus(orderId, newStatus) {
+
+    function changeOrderStatus(orderId, newStatus) {
       var db = window.db;
       var fc = window.firebaseCollections;
       if (db && fc) {
